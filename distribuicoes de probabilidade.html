@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playground Interativo de Distribuições de Probabilidade</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+        :root {
+            --bg-color: #f4f7f9;
+            --card-bg-color: #ffffff;
+            --primary-color: #005f73;
+            --accent-color: #0a9396;
+            --text-color: #0d1b2a;
+            --light-text-color: #5a6a7b;
+            --border-color: #e1e5e8;
+            --fill-color: rgba(10, 147, 150, 0.15); /* Cor de preenchimento base para contínuas */
+            --highlight-color: rgba(0, 95, 115, 0.6); /* Cor de destaque para probabilidade */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Source Sans 3', 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--light-text-color);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .distribution-section {
+            background-color: var(--card-bg-color);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 95, 115, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .distribution-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 95, 115, 0.12);
+        }
+
+        .distribution-section h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .distribution-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .distribution-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .controls, .stats, .calculator {
+            background-color: #fdfdfd;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .controls h3, .stats h3, .calculator h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light-text-color);
+            font-size: 0.9rem;
+        }
+        
+        .control-group span {
+            font-weight: bold;
+            color: var(--accent-color);
+            background-color: var(--bg-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -5px;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--primary-color);
+        }
+
+        .stats p {
+            margin: 8px 0;
+            font-size: 1rem;
+        }
+        
+        .stats .formula {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #eef1f3;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            color: #333;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            border: 1px solid #ddd;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+        
+        .calculator {
+            margin-top: 20px;
+        }
+
+        .calculator .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .calculator input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .calculator button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--accent-color);
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+        
+        .calculator button:hover {
+            background-color: var(--primary-color);
+        }
+
+        .result {
+            margin-top: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            background-color: var(--bg-color);
+            padding: 8px;
+            border-radius: 5px;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(90deg, #fff, #f4f7f9, #fff);
+            border-radius: 8px;
+            margin: 20px 0;
+            color: var(--primary-color);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Playground Interativo de Distribuições de Probabilidade</h1>
+        <p>Explore as principais distribuições discretas e contínuas. Altere os parâmetros, calcule probabilidades e veja os gráficos se transformarem em tempo real.</p>
+    </header>
+
+    <main>
+        <!-- ==================== SEÇÃO DISCRETA ==================== -->
+        <h2 class="section-title">Distribuições de Variáveis Discretas</h2>
+
+        <!-- Bernoulli -->
+        <section id="bernoulli" class="distribution-section">
+            <h2>Distribuição de Bernoulli</h2>
+            <div class="distribution-content">
+                <div class="info-panel">
+                    <div class="controls">
+                        <h3>Parâmetros</h3>
+                        <div class="control-group">
+                            <label for="bern-p">Probabilidade de Sucesso (p): <span id="bern-p-val">0.5</span></label>
+                            <input type="range" id="bern-p" min="0" max="1" step="0.01" value="0.5">
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <h3>Informações</h3>
+                        <p>Usada para um único experimento com dois resultados: sucesso (1) ou fracasso (0).</p>
+                        <p class="formula">P(X=k) = p^k * (1-p)^(1-k)</p>
+                        <p><b>Média (μ):</b> <span id="bern-mean"></span></p>
+                        <p><b>Variância (σ²):</b> <span id="bern-var"></span></p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="bernoulliChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Binomial -->
+        <section id="binomial" class="distribution-section">
+            <h2>Distribuição Binomial</h2>
+            <div class="distribution-content">
+                <div class="info-panel">
+                    <div class="controls">
+                        <h3>Parâmetros</h3>
+                        <div class="control-group">
+                            <label for="bin-n">Número de Tentativas (n): <span id="bin-n-val">20</span></label>
+                            <input type="range" id="bin-n" min="1" max="50" step="1" value="20">
+                        </div>
+                        <div class="control-group">
+                            <label for="bin-p">Probabilidade de Sucesso (p): <span id="bin-p-val">0.5</span></label>
+                            <input type="range" id="bin-p" min="0" max="1" step="0.01" value="0.5">
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <h3>Informações</h3>
+                        <p>Modela o número de sucessos em 'n' tentativas de Bernoulli independentes.</p>
+                        <p class="formula">P(X=k) = C(n,k) * p^k * (1-p)^(n-k)</p>
+                        <p><b>Média (μ):</b> <span id="bin-mean"></span></p>
+                        <p><b>Variância (σ²):</b> <span id="bin-var"></span></p>
+                    </div>
+                    <div class="calculator">
+                        <h3>Calcular Probabilidade</h3>
+                        <div class="input-group">
+                             <label>P(X = <input type="number" id="bin-k" value="10" min="0">):</label>
+                             <button id="bin-calc-eq">Calcular</button>
+                        </div>
+                        <div class="input-group">
+                             <label>P(X ≤ <input type="number" id="bin-k-le" value="10" min="0">):</label>
+                             <button id="bin-calc-le">Calcular</button>
+                        </div>
+                        <p class="result" id="bin-result"></p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="binomialChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Poisson -->
+        <section id="poisson" class="distribution-section">
+            <h2>Distribuição de Poisson</h2>
+             <div class="distribution-content">
+                <div class="info-panel">
+                    <div class="controls">
+                        <h3>Parâmetros</h3>
+                        <div class="control-group">
+                            <label for="poi-lambda">Taxa Média (λ): <span id="poi-lambda-val">5</span></label>
+                            <input type="range" id="poi-lambda" min="0.1" max="20" step="0.1" value="5">
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <h3>Informações</h3>
+                        <p>Modela o número de eventos que ocorrem em um intervalo fixo de tempo ou espaço.</p>
+                        <p class="formula">P(X=k) = (λ^k * e^-λ) / k!</p>
+                        <p><b>Média (μ):</b> <span id="poi-mean"></span></p>
+                        <p><b>Variância (σ²):</b> <span id="poi-var"></span></p>
+                    </div>
+                    <div class="calculator">
+                        <h3>Calcular Probabilidade</h3>
+                        <div class="input-group">
+                             <label>P(X = <input type="number" id="poi-k" value="5" min="0">):</label>
+                             <button id="poi-calc-eq">Calcular</button>
+                        </div>
+                        <div class="input-group">
+                             <label>P(X ≤ <input type="number" id="poi-k-le" value="5" min="0">):</label>
+                             <button id="poi-calc-le">Calcular</button>
+                        </div>
+                        <p class="result" id="poi-result"></p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="poissonChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Geométrica -->
+        <section id="geometric" class="distribution-section">
+            <h2>Distribuição Geométrica</h2>
+             <div class="distribution-content">
+                <div class="info-panel">
+                    <div class="controls">
+                        <h3>Parâmetros</h3>
+                        <div class="control-group">
+                            <label for="geo-p">Probabilidade de Sucesso (p): <span id="geo-p-val">0.3</span></label>
+                            <input type="range" id="geo-p" min="0.01" max="1" step="0.01" value="0.3">
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <h3>Informações</h3>
+                        <p>Modela o número de tentativas de Bernoulli até o primeiro sucesso.</p>
+                        <p class="formula">P(X=k) = (1-p)^(k-1) * p</p>
+                        <p><b>Média (μ):</b> <span id="geo-mean"></span></p>
+                        <p><b>Variância (σ²):</b> <span id="geo-var"></span></p>
+                    </div>
+                    <div class="calculator">
+                        <h3>Calcular Probabilidade</h3>
+                        <div class="input-group">
+                             <label>P(X = <input type="number" id="geo-k" value="3" min="1">):</label>
+                             <button id="geo-calc-eq">Calcular</button>
+                        </div>
+                        <div class="input-group">
+                             <label>P(X ≤ <input type="number" id="geo-k-le" value="3" min="1">):</label>
+                             <button id="geo-calc-le">Calcular</button>
+                        </div>
+                        <p class="result" id="geo-result"></p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="geometricChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==================== SEÇÃO CONTÍNUA ==================== -->
+        <h2 class="section-title">Distribuições de Variáveis Contínuas</h2>
+
+        <!-- Uniforme -->
+        <section id="uniform" class="distribution-section">
+            <h2>Distribuição Uniforme</h2>
+            <div class="distribution-content">
+                <div class="info-panel">
+                    <div class="controls">
+                        <h3>Parâmetros</h3>
+                        <div class="control-group">
+                            <label for="uni-a">Limite Inferior (a): <span id="uni-a-val">0</span></label>
+                            <input type="range" id="uni-a" min="-10" max="10" step="1" value="0">
+                        </div>
+                        <div class="control-group">
+                            <label for="uni-b">Limite Superior (b): <span id="uni-b-val">10</span></label>
+                            <input type="range" id="uni-b" min="-10" max="20" step="1" value="10">
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <h3>Informações</h3>
+                        <p>Todos os resultados em um intervalo [a, b] são igualmente prováveis.</p>
+                        <p class="formula">f(x) = 1 / (b-a) para a ≤ x ≤ b</p>
+                        <p><b>Média (μ):</b> <span id="uni-mean"></span></p>
+                        <p><b>Variância (σ²):</b> <span id="uni-var"></span></p>
+                    </div>
+                    <div class="calculator">
+                        <h3>Calcular Probabilidade</h3>
+                        <div class="input-group">
+                             <label>P(<input type="number" id="uni-x1" value="2"> < X < <input type="number" id="uni-x2" value="7">):</label>
+                             <button id="uni-calc">Calcular</button>
+                        </div>
+                        <p class="result" id="uni-result"></p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="uniformChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Normal -->
+        <section id="normal" class="distribution-section">
+            <h2>Distribuição Normal (Gaussiana)</h2>
+            <div class="distribution-content">
+                <div class="info-panel">
+                    <div class="controls">
+                        <h3>Parâmetros</h3>
+                        <div class="control-group">
+                            <label for="norm-mu">Média (μ): <span id="norm-mu-val">0</span></label>
+                            <input type="range" id="norm-mu" min="-5" max="5" step="0.1" value="0">
+                        </div>
+                        <div class="control-group">
+                            <label for="norm-sigma">Desvio Padrão (σ): <span id="norm-sigma-val">1.00</span></label>
+                            <input type="range" id="norm-sigma" min="0.1" max="3" step="0.01" value="1">
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <h3>Informações</h3>
+                        <p>A mais importante das distribuições, descreve muitos fenômenos naturais.</p>
+                        <p class="formula">f(x) = (1/σ√2π) * e^(-(x-μ)²/2σ²)</p>
+                        <p><b>Média (μ):</b> <span id="norm-mean"></span></p>
+                        <p><b>Variância (σ²):</b> <span id="norm-var"></span></p>
+                    </div>
+                     <div class="calculator">
+                        <h3>Calcular Probabilidade</h3>
+                        <div class="input-group">
+                             <label>P(<input type="number" id="norm-x1" value="-1"> < X < <input type="number" id="norm-x2" value="1">):</label>
+                             <button id="norm-calc">Calcular</button>
+                        </div>
+                        <p class="result" id="norm-result"></p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="normalChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exponencial -->
+        <section id="exponential" class="distribution-section">
+            <h2>Distribuição Exponencial</h2>
+             <div class="distribution-content">
+                <div class="info-panel">
+                    <div class="controls">
+                        <h3>Parâmetros</h3>
+                        <div class="control-group">
+                            <label for="exp-lambda">Taxa (λ): <span id="exp-lambda-val">0.5</span></label>
+                            <input type="range" id="exp-lambda" min="0.1" max="5" step="0.1" value="0.5">
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <h3>Informações</h3>
+                        <p>Modela o tempo entre eventos em um processo de Poisson.</p>
+                        <p class="formula">f(x) = λ * e^(-λx) para x ≥ 0</p>
+                        <p><b>Média (μ):</b> <span id="exp-mean"></span></p>
+                        <p><b>Variância (σ²):</b> <span id="exp-var"></span></p>
+                    </div>
+                    <div class="calculator">
+                        <h3>Calcular Probabilidade</h3>
+                        <div class="input-group">
+                             <label>P(<input type="number" id="exp-x1" value="1"> < X < <input type="number" id="exp-x2" value="4">):</label>
+                             <button id="exp-calc">Calcular</button>
+                        </div>
+                        <p class="result" id="exp-result"></p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="exponentialChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Gama -->
+        <section id="gamma" class="distribution-section">
+            <h2>Distribuição Gama</h2>
+             <div class="distribution-content">
+                <div class="info-panel">
+                    <div class="controls">
+                        <h3>Parâmetros</h3>
+                        <div class="control-group">
+                            <label for="gamma-alpha">Forma (α): <span id="gamma-alpha-val">2</span></label>
+                            <input type="range" id="gamma-alpha" min="0.1" max="20" step="0.1" value="2">
+                        </div>
+                        <div class="control-group">
+                            <label for="gamma-beta">Taxa (β): <span id="gamma-beta-val">1</span></label>
+                            <input type="range" id="gamma-beta" min="0.1" max="5" step="0.1" value="1">
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <h3>Informações</h3>
+                        <p>Generaliza a Exponencial; modela tempos de espera de 'α' eventos.</p>
+                        <p class="formula">f(x) = (β^α/Γ(α)) * x^(α-1) * e^(-βx)</p>
+                        <p><b>Média (μ):</b> <span id="gamma-mean"></span></p>
+                        <p><b>Variância (σ²):</b> <span id="gamma-var"></span></p>
+                    </div>
+                    <div class="calculator">
+                        <h3>Calcular Probabilidade</h3>
+                        <div class="input-group">
+                             <label>P(<input type="number" id="gamma-x1" value="1"> < X < <input type="number" id="gamma-x2" value="4">):</label>
+                             <button id="gamma-calc">Calcular</button>
+                        </div>
+                        <p class="result" id="gamma-result"></p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="gammaChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Helper functions (unchanged)
+    const memoFactorial = (() => { const cache = [1]; return (n) => { if (n < 0) return NaN; if (n >= cache.length) { for (let i = cache.length; i <= n; i++) { cache[i] = cache[i - 1] * i; } } return cache[n]; }; })();
+    const combinations = (n, k) => { if (k < 0 || k > n) return 0; return memoFactorial(n) / (memoFactorial(k) * memoFactorial(n - k)); };
+    const gamma = (z) => { const g = 7; const p = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7]; if (z < 0.5) return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z)); z -= 1; let x = p[0]; for (let i = 1; i < g + 2; i++) x += p[i] / (z + i); const t = z + g + 0.5; return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x; };
+    const integrate = (func, a, b, n = 1000) => { const h = (b - a) / n; let sum = 0.5 * (func(a) + func(b)); for (let i = 1; i < n; i++) { sum += func(a + i * h); } return sum * h; };
+    
+    const chartInstances = {};
+    const COLORS = {
+        primary: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
+        accent: getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim(),
+        text: getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim(),
+        lightText: getComputedStyle(document.documentElement).getPropertyValue('--light-text-color').trim(),
+        fill: getComputedStyle(document.documentElement).getPropertyValue('--fill-color').trim(),
+        highlight: getComputedStyle(document.documentElement).getPropertyValue('--highlight-color').trim(),
+    };
+
+    const defaultDiscreteChartOptions = (title) => ({
+        responsive: true, maintainAspectRatio: false,
+        plugins: { title: { display: true, text: title, color: COLORS.text, font: { size: 16 } }, legend: { labels: { color: COLORS.lightText } } },
+        scales: { x: { ticks: { color: COLORS.lightText }, grid: { color: 'rgba(0,0,0,0.05)' } }, y: { ticks: { color: COLORS.lightText }, grid: { color: 'rgba(0,0,0,0.05)' }, beginAtZero: true } }
+    });
+    
+    const defaultContinuousChartOptions = (title) => ({
+        responsive: true, maintainAspectRatio: false,
+        plugins: { title: { display: true, text: title, color: COLORS.text, font: { size: 16 } }, legend: { labels: { color: COLORS.lightText } } },
+        scales: { x: { type: 'linear', ticks: { color: COLORS.lightText }, grid: { color: 'rgba(0,0,0,0.05)' } }, y: { ticks: { color: COLORS.lightText }, grid: { color: 'rgba(0,0,0,0.05)' }, beginAtZero: true } }
+    });
+    
+    // Discrete distributions setup (mostly visual changes)
+
+    // Bernoulli
+    const bernP = document.getElementById('bern-p');
+    const bernPVal = document.getElementById('bern-p-val');
+    const bernMean = document.getElementById('bern-mean');
+    const bernVar = document.getElementById('bern-var');
+    function updateBernoulli() {
+        const p = parseFloat(bernP.value);
+        bernPVal.textContent = p.toFixed(2);
+        bernMean.textContent = p.toFixed(4);
+        bernVar.textContent = (p * (1 - p)).toFixed(4);
+        chartInstances.bernoulli.data.datasets[0].data = [1 - p, p];
+        chartInstances.bernoulli.update();
+    }
+    chartInstances.bernoulli = new Chart('bernoulliChart', {
+        type: 'bar',
+        data: { labels: ['Fracasso (0)', 'Sucesso (1)'], datasets: [{ label: 'Probabilidade', data: [], backgroundColor: [COLORS.primary, COLORS.accent], borderWidth: 0 }] },
+        options: defaultDiscreteChartOptions('PMF de Bernoulli')
+    });
+    bernP.addEventListener('input', updateBernoulli);
+    updateBernoulli();
+    
+    // --- All other discrete distributions setup code is similar ---
+    // Binomial
+    const binN = document.getElementById('bin-n'); const binP = document.getElementById('bin-p'); const binNVal = document.getElementById('bin-n-val'); const binPVal = document.getElementById('bin-p-val'); const binMean = document.getElementById('bin-mean'); const binVar = document.getElementById('bin-var');
+    const binPMF = (k, n, p) => combinations(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+    function updateBinomial(highlightFunc = null) {
+        const n = parseInt(binN.value); const p = parseFloat(binP.value);
+        binNVal.textContent = n; binPVal.textContent = p.toFixed(2);
+        binMean.textContent = (n * p).toFixed(4); binVar.textContent = (n * p * (1 - p)).toFixed(4);
+        const labels = Array.from({ length: n + 1 }, (_, i) => i); const data = labels.map(k => binPMF(k, n, p));
+        const backgroundColors = highlightFunc ? labels.map(k => highlightFunc(k) ? COLORS.highlight : COLORS.primary) : COLORS.primary;
+        chartInstances.binomial.data.labels = labels; chartInstances.binomial.data.datasets[0].data = data; chartInstances.binomial.data.datasets[0].backgroundColor = backgroundColors; chartInstances.binomial.update();
+    }
+    chartInstances.binomial = new Chart('binomialChart', { type: 'bar', data: { labels: [], datasets: [{ label: 'Probabilidade', data: [], backgroundColor: COLORS.primary, borderWidth: 0 }] }, options: defaultDiscreteChartOptions('PMF Binomial') });
+    [binN, binP].forEach(el => el.addEventListener('input', () => updateBinomial()));
+    document.getElementById('bin-calc-eq').addEventListener('click', () => { const k = parseInt(document.getElementById('bin-k').value); const n = parseInt(binN.value); const p = parseFloat(binP.value); const prob = binPMF(k, n, p); document.getElementById('bin-result').textContent = `P(X=${k}) = ${prob.toFixed(5)}`; updateBinomial(val => val === k); });
+    document.getElementById('bin-calc-le').addEventListener('click', () => { const k_le = parseInt(document.getElementById('bin-k-le').value); const n = parseInt(binN.value); const p = parseFloat(binP.value); let prob_sum = 0; for (let i = 0; i <= k_le; i++) { prob_sum += binPMF(i, n, p); } document.getElementById('bin-result').textContent = `P(X≤${k_le}) = ${prob_sum.toFixed(5)}`; updateBinomial(val => val <= k_le); });
+    updateBinomial();
+    
+    // Poisson, Geometric... (code is the same structure as Binomial with different formulas, so it's omitted for brevity but present in the full file)
+    const poiLambda = document.getElementById('poi-lambda'); const poiLambdaVal = document.getElementById('poi-lambda-val'); const poiMean = document.getElementById('poi-mean'); const poiVar = document.getElementById('poi-var');
+    const poissonPMF = (k, lambda) => (Math.pow(lambda, k) * Math.exp(-lambda)) / memoFactorial(k);
+    function updatePoisson(highlightFunc = null) {
+        const lambda = parseFloat(poiLambda.value); poiLambdaVal.textContent = lambda.toFixed(1); poiMean.textContent = lambda.toFixed(4); poiVar.textContent = lambda.toFixed(4);
+        const maxK = Math.max(20, Math.ceil(lambda + 5 * Math.sqrt(lambda))); const labels = Array.from({ length: maxK + 1 }, (_, i) => i); const data = labels.map(k => poissonPMF(k, lambda));
+        const backgroundColors = highlightFunc ? labels.map(k => highlightFunc(k) ? COLORS.highlight : COLORS.primary) : COLORS.primary;
+        chartInstances.poisson.data.labels = labels; chartInstances.poisson.data.datasets[0].data = data; chartInstances.poisson.data.datasets[0].backgroundColor = backgroundColors; chartInstances.poisson.update();
+    }
+    chartInstances.poisson = new Chart('poissonChart', { type: 'bar', data: { labels: [], datasets: [{ label: 'Probabilidade', data: [], backgroundColor: COLORS.primary, borderWidth: 0 }] }, options: defaultDiscreteChartOptions('PMF de Poisson') });
+    poiLambda.addEventListener('input', () => updatePoisson());
+    document.getElementById('poi-calc-eq').addEventListener('click', () => { const k = parseInt(document.getElementById('poi-k').value); const lambda = parseFloat(poiLambda.value); const prob = poissonPMF(k, lambda); document.getElementById('poi-result').textContent = `P(X=${k}) = ${prob.toFixed(5)}`; updatePoisson(val => val === k); });
+    document.getElementById('poi-calc-le').addEventListener('click', () => { const k_le = parseInt(document.getElementById('poi-k-le').value); const lambda = parseFloat(poiLambda.value); let prob_sum = 0; for (let i = 0; i <= k_le; i++) { prob_sum += poissonPMF(i, lambda); } document.getElementById('poi-result').textContent = `P(X≤${k_le}) = ${prob_sum.toFixed(5)}`; updatePoisson(val => val <= k_le); });
+    updatePoisson();
+
+    const geoP = document.getElementById('geo-p'); const geoPVal = document.getElementById('geo-p-val'); const geoMean = document.getElementById('geo-mean'); const geoVar = document.getElementById('geo-var');
+    const geometricPMF = (k, p) => Math.pow(1 - p, k - 1) * p;
+    function updateGeometric(highlightFunc = null) {
+        const p = parseFloat(geoP.value); geoPVal.textContent = p.toFixed(2);
+        const mean = 1 / p; const variance = (1 - p) / (p * p); geoMean.textContent = mean.toFixed(4); geoVar.textContent = variance.toFixed(4);
+        const maxK = Math.min(Math.ceil(5 / p), 50); const labels = Array.from({ length: maxK }, (_, i) => i + 1); const data = labels.map(k => geometricPMF(k, p));
+        const backgroundColors = highlightFunc ? labels.map(k => highlightFunc(k) ? COLORS.highlight : COLORS.primary) : COLORS.primary;
+        chartInstances.geometric.data.labels = labels; chartInstances.geometric.data.datasets[0].data = data; chartInstances.geometric.data.datasets[0].backgroundColor = backgroundColors; chartInstances.geometric.update();
+    }
+    chartInstances.geometric = new Chart('geometricChart', { type: 'bar', data: { labels: [], datasets: [{ label: 'Probabilidade', data: [], backgroundColor: COLORS.primary, borderWidth: 0 }] }, options: defaultDiscreteChartOptions('PMF Geométrica') });
+    geoP.addEventListener('input', () => updateGeometric());
+    document.getElementById('geo-calc-eq').addEventListener('click', () => { const k = parseInt(document.getElementById('geo-k').value); const p = parseFloat(geoP.value); const prob = geometricPMF(k, p); document.getElementById('geo-result').textContent = `P(X=${k}) = ${prob.toFixed(5)}`; updateGeometric(val => val === k); });
+    document.getElementById('geo-calc-le').addEventListener('click', () => { const k_le = parseInt(document.getElementById('geo-k-le').value); const p = parseFloat(geoP.value); let prob_sum = 0; for (let i = 1; i <= k_le; i++) { prob_sum += geometricPMF(i, p); } document.getElementById('geo-result').textContent = `P(X≤${k_le}) = ${prob_sum.toFixed(5)}`; updateGeometric(val => val <= k_le); });
+    updateGeometric();
+    
+    // ==================================
+    // CONTINUOUS DISTRIBUTIONS - REFACTORED
+    // ==================================
+
+    const createContinuousChart = (canvasId, options) => {
+        return new Chart(canvasId, {
+            type: 'line',
+            data: {
+                datasets: [
+                    { label: 'f(x)', data: [], borderColor: COLORS.primary, borderWidth: 2.5, pointRadius: 0, tension: 0.1, order: 1 },
+                    { label: 'Área Total', data: [], backgroundColor: COLORS.fill, borderColor: 'transparent', fill: 'origin', pointRadius: 0, order: 3 },
+                    { label: 'Área da Probabilidade', data: [], backgroundColor: COLORS.highlight, fill: 'origin', pointRadius: 0, order: 2 }
+                ]
+            },
+            options: options
+        });
+    }
+
+    // Uniform
+    const uniA = document.getElementById('uni-a'); const uniB = document.getElementById('uni-b'); const uniAVal = document.getElementById('uni-a-val'); const uniBVal = document.getElementById('uni-b-val'); const uniMean = document.getElementById('uni-mean'); const uniVar = document.getElementById('uni-var');
+    const uniformPDF = (x, a, b) => (x >= a && x <= b) ? 1 / (b - a) : 0;
+    function updateUniform(x1 = null, x2 = null) {
+        let a = parseFloat(uniA.value); let b = parseFloat(uniB.value);
+        if (a >= b) { a = b - 0.1; uniA.value = a; }
+        uniAVal.textContent = a.toFixed(1); uniBVal.textContent = b.toFixed(1);
+        uniMean.textContent = ((a + b) / 2).toFixed(4); uniVar.textContent = (Math.pow(b - a, 2) / 12).toFixed(4);
+        const range = b - a; const plot_min = a - range * 0.2; const plot_max = b + range * 0.2;
+        const points = []; const highlightPoints = [];
+        const n_points = 200;
+        for(let i = 0; i <= n_points; i++) {
+            const x = plot_min + (plot_max - plot_min) * i / n_points;
+            const y = uniformPDF(x, a, b);
+            points.push({x: x, y: y});
+            if (x1 !== null && x2 !== null && x >= x1 && x <= x2) {
+                highlightPoints.push({x: x, y: y});
+            }
+        }
+        chartInstances.uniform.data.datasets[0].data = points; chartInstances.uniform.data.datasets[1].data = points; chartInstances.uniform.data.datasets[2].data = highlightPoints;
+        chartInstances.uniform.update();
+    }
+    chartInstances.uniform = createContinuousChart('uniformChart', defaultContinuousChartOptions('PDF Uniforme'));
+    [uniA, uniB].forEach(el => el.addEventListener('input', () => updateUniform()));
+    document.getElementById('uni-calc').addEventListener('click', () => { const x1 = parseFloat(document.getElementById('uni-x1').value); const x2 = parseFloat(document.getElementById('uni-x2').value); const a = parseFloat(uniA.value); const b = parseFloat(uniB.value); const lower = Math.max(a, x1); const upper = Math.min(b, x2); let prob = 0; if (upper > lower) { prob = (upper - lower) / (b - a); } document.getElementById('uni-result').textContent = `P(${x1}<X<${x2}) = ${prob.toFixed(5)}`; updateUniform(x1, x2); });
+    updateUniform();
+    
+    // Normal
+    const normMu = document.getElementById('norm-mu'); const normSigma = document.getElementById('norm-sigma'); const normMuVal = document.getElementById('norm-mu-val'); const normSigmaVal = document.getElementById('norm-sigma-val'); const normMean = document.getElementById('norm-mean'); const normVar = document.getElementById('norm-var');
+    const normalPDF = (x, mu, sigma) => (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+    function updateNormal(x1 = null, x2 = null) {
+        const mu = parseFloat(normMu.value); const sigma = parseFloat(normSigma.value);
+        normMuVal.textContent = mu.toFixed(2); normSigmaVal.textContent = sigma.toFixed(2);
+        normMean.textContent = mu.toFixed(4); normVar.textContent = (sigma * sigma).toFixed(4);
+        const plot_min = -10; const plot_max = 10;
+        const points = []; const highlightPoints = [];
+        const n_points = 200;
+        for(let i = 0; i <= n_points; i++) {
+            const x = plot_min + (plot_max - plot_min) * i / n_points;
+            const y = normalPDF(x, mu, sigma);
+            points.push({x: x, y: y});
+            if (x1 !== null && x2 !== null && x >= x1 && x <= x2) {
+                highlightPoints.push({x: x, y: y});
+            }
+        }
+        chartInstances.normal.data.datasets[0].data = points; chartInstances.normal.data.datasets[1].data = points; chartInstances.normal.data.datasets[2].data = highlightPoints;
+        chartInstances.normal.update();
+    }
+    const normalChartOptions = defaultContinuousChartOptions('PDF Normal');
+    normalChartOptions.scales.x.min = -10; normalChartOptions.scales.x.max = 10;
+    normalChartOptions.scales.y.min = 0; normalChartOptions.scales.y.max = 0.5;
+    chartInstances.normal = createContinuousChart('normalChart', normalChartOptions);
+    [normMu, normSigma].forEach(el => el.addEventListener('input', () => updateNormal()));
+    document.getElementById('norm-calc').addEventListener('click', () => { const x1 = parseFloat(document.getElementById('norm-x1').value); const x2 = parseFloat(document.getElementById('norm-x2').value); const mu = parseFloat(normMu.value); const sigma = parseFloat(normSigma.value); const prob = integrate(x => normalPDF(x, mu, sigma), x1, x2); document.getElementById('norm-result').textContent = `P(${x1}<X<${x2}) ≈ ${prob.toFixed(5)}`; updateNormal(x1, x2); });
+    updateNormal();
+    
+    // Exponential
+    const expLambda = document.getElementById('exp-lambda'); const expLambdaVal = document.getElementById('exp-lambda-val'); const expMean = document.getElementById('exp-mean'); const expVar = document.getElementById('exp-var');
+    const exponentialPDF = (x, lambda) => x >= 0 ? lambda * Math.exp(-lambda * x) : 0;
+    function updateExponential(x1 = null, x2 = null) {
+        const lambda = parseFloat(expLambda.value); expLambdaVal.textContent = lambda.toFixed(2);
+        const mean = 1 / lambda; const variance = 1 / (lambda * lambda);
+        expMean.textContent = mean.toFixed(4); expVar.textContent = variance.toFixed(4);
+        const plot_max = Math.max(8 / lambda, 5);
+        const points = []; const highlightPoints = [];
+        const n_points = 200;
+        for(let i = 0; i <= n_points; i++) {
+            const x = (plot_max * i) / n_points;
+            const y = exponentialPDF(x, lambda);
+            points.push({x: x, y: y});
+            if (x1 !== null && x2 !== null && x >= x1 && x <= x2) {
+                highlightPoints.push({x: x, y: y});
+            }
+        }
+        chartInstances.exponential.data.datasets[0].data = points; chartInstances.exponential.data.datasets[1].data = points; chartInstances.exponential.data.datasets[2].data = highlightPoints;
+        chartInstances.exponential.update();
+    }
+    chartInstances.exponential = createContinuousChart('exponentialChart', defaultContinuousChartOptions('PDF Exponencial'));
+    expLambda.addEventListener('input', () => updateExponential());
+    document.getElementById('exp-calc').addEventListener('click', () => { const x1 = parseFloat(document.getElementById('exp-x1').value); const x2 = parseFloat(document.getElementById('exp-x2').value); const lambda = parseFloat(expLambda.value); const cdf = x => x >= 0 ? 1 - Math.exp(-lambda * x) : 0; const prob = cdf(x2) - cdf(x1); document.getElementById('exp-result').textContent = `P(${x1}<X<${x2}) = ${prob.toFixed(5)}`; updateExponential(x1, x2); });
+    updateExponential();
+
+    // Gamma
+    const gammaAlpha = document.getElementById('gamma-alpha'); const gammaBeta = document.getElementById('gamma-beta'); const gammaAlphaVal = document.getElementById('gamma-alpha-val'); const gammaBetaVal = document.getElementById('gamma-beta-val'); const gammaMean = document.getElementById('gamma-mean'); const gammaVar = document.getElementById('gamma-var');
+    const gammaPDF = (x, alpha, beta) => { if (x <= 0) return 0; const term1 = Math.pow(beta, alpha) / gamma(alpha); const term2 = Math.pow(x, alpha - 1); const term3 = Math.exp(-beta * x); return term1 * term2 * term3; };
+    function updateGamma(x1 = null, x2 = null) {
+        const alpha = parseFloat(gammaAlpha.value); const beta = parseFloat(gammaBeta.value);
+        gammaAlphaVal.textContent = alpha.toFixed(2); gammaBetaVal.textContent = beta.toFixed(2);
+        const mean = alpha / beta; const variance = alpha / (beta * beta);
+        gammaMean.textContent = mean.toFixed(4); gammaVar.textContent = variance.toFixed(4);
+        const plot_max = Math.max(mean + 5 * Math.sqrt(variance), 5);
+        const points = []; const highlightPoints = [];
+        const n_points = 200;
+        for(let i = 0; i <= n_points; i++) {
+            const x = (plot_max * i) / n_points;
+            const y = gammaPDF(x, alpha, beta);
+            points.push({x: x, y: y});
+            if (x1 !== null && x2 !== null && x >= x1 && x <= x2) {
+                highlightPoints.push({x: x, y: y});
+            }
+        }
+        chartInstances.gamma.data.datasets[0].data = points; chartInstances.gamma.data.datasets[1].data = points; chartInstances.gamma.data.datasets[2].data = highlightPoints;
+        chartInstances.gamma.update();
+    }
+    chartInstances.gamma = createContinuousChart('gammaChart', defaultContinuousChartOptions('PDF Gama'));
+    [gammaAlpha, gammaBeta].forEach(el => el.addEventListener('input', () => updateGamma()));
+    document.getElementById('gamma-calc').addEventListener('click', () => { const x1 = parseFloat(document.getElementById('gamma-x1').value); const x2 = parseFloat(document.getElementById('gamma-x2').value); const alpha = parseFloat(gammaAlpha.value); const beta = parseFloat(gammaBeta.value); const prob = integrate(x => gammaPDF(x, alpha, beta), x1, x2); document.getElementById('gamma-result').textContent = `P(${x1}<X<${x2}) ≈ ${prob.toFixed(5)}`; updateGamma(x1, x2); });
+    updateGamma();
+});
+</script>
+
+
+</body>
+</html>
