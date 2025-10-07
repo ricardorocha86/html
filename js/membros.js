@@ -1,8 +1,14 @@
 // URL do CSV publicado do Google Sheets
 const CSV_URL_ORIGINAL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScvFUk8IBaOUAlGWC3l8Emtsvev281hcnNoGm_1hCRKLMbb4XmLFsc6x7NySS8Rlds6x5Narz-Lfm9/pub?gid=0&single=true&output=csv';
 
-// Usa proxy CORS para contornar bloqueios
-const CSV_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV_URL_ORIGINAL)}`;
+// Lista de proxies CORS para tentar (em ordem de preferência)
+const PROXIES = [
+    '/.netlify/functions/csv-proxy', // Netlify Function (melhor opção)
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV_URL_ORIGINAL)}`,
+    `https://cors-anywhere.herokuapp.com/${CSV_URL_ORIGINAL}`,
+    `https://thingproxy.freeboard.io/fetch/${CSV_URL_ORIGINAL}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV_URL_ORIGINAL)}`
+];
 
 // Cria card do coordenador
 function criarCardCoordenador(membro) {
@@ -72,20 +78,55 @@ function renderizarMembros(membros) {
     }
 }
 
-// Carrega dados do CSV usando PapaParse com proxy CORS
+// Tenta carregar CSV usando diferentes proxies
 function carregarMembros() {
     const container = document.getElementById('membros-container');
     container.innerHTML = '<p style="text-align: center; color: #888;">Carregando membros da planilha...</p>';
     
-    console.log('Buscando CSV via proxy:', CSV_URL);
+    tentarProxies(0);
+}
+
+function tentarProxies(indiceProxy) {
+    if (indiceProxy >= PROXIES.length) {
+        // Todos os proxies falharam, tenta método alternativo
+        console.warn('Todos os proxies falharam, tentando método alternativo...');
+        carregarMembrosAlternativo();
+        return;
+    }
     
-    Papa.parse(CSV_URL, {
+    const proxyAtual = PROXIES[indiceProxy];
+    console.log(`Tentando proxy ${indiceProxy + 1}/${PROXIES.length}:`, proxyAtual);
+    
+    // Se for Netlify Function, usa fetch direto
+    if (proxyAtual.startsWith('/.netlify/functions/')) {
+        fetch(proxyAtual)
+            .then(resposta => {
+                if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+                return resposta.text();
+            })
+            .then(csvTexto => {
+                console.log(`✓ Netlify Function bem-sucedida!`);
+                const resultado = Papa.parse(csvTexto, {
+                    header: true,
+                    skipEmptyLines: true
+                });
+                renderizarMembros(resultado.data);
+            })
+            .catch(erro => {
+                console.error(`✗ Netlify Function falhou:`, erro);
+                setTimeout(() => tentarProxies(indiceProxy + 1), 500);
+            });
+        return;
+    }
+    
+    // Para outros proxies, usa PapaParse
+    Papa.parse(proxyAtual, {
         download: true,
         header: true,
         skipEmptyLines: true,
         dynamicTyping: false,
         complete: function(resultado) {
-            console.log('✓ CSV carregado com sucesso!');
+            console.log(`✓ CSV carregado com sucesso via proxy ${indiceProxy + 1}!`);
             console.log('Total de linhas:', resultado.data.length);
             console.log('Primeira linha:', resultado.data[0]);
             
@@ -96,29 +137,29 @@ function carregarMembros() {
             renderizarMembros(resultado.data);
         },
         error: function(erro, arquivo) {
-            console.error('✗ Erro ao carregar CSV:', erro);
-            console.error('Arquivo:', arquivo);
+            console.error(`✗ Proxy ${indiceProxy + 1} falhou:`, erro);
             
-            // Tenta método alternativo
-            carregarMembrosAlternativo();
+            // Tenta próximo proxy
+            setTimeout(() => tentarProxies(indiceProxy + 1), 500);
         }
     });
 }
 
-// Método alternativo usando fetch direto
+// Método alternativo usando diferentes abordagens
 function carregarMembrosAlternativo() {
     const container = document.getElementById('membros-container');
     container.innerHTML = '<p style="text-align: center; color: #888;">Tentando método alternativo...</p>';
     
-    console.log('Tentando fetch direto...');
+    console.log('Tentando métodos alternativos...');
     
-    fetch(CSV_URL)
+    // Método 1: Fetch com proxy diferente
+    fetch(`https://corsproxy.io/?${encodeURIComponent(CSV_URL_ORIGINAL)}`)
         .then(resposta => {
             if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
             return resposta.text();
         })
         .then(csvTexto => {
-            console.log('✓ Fetch bem-sucedido!');
+            console.log('✓ Fetch alternativo bem-sucedido!');
             console.log('Primeiros 200 caracteres:', csvTexto.substring(0, 200));
             
             const resultado = Papa.parse(csvTexto, {
@@ -130,22 +171,36 @@ function carregarMembrosAlternativo() {
             renderizarMembros(resultado.data);
         })
         .catch(erro => {
-            console.error('✗ Erro no fetch alternativo:', erro);
-            container.innerHTML = `
-                <div style="color: red; text-align: center; padding: 20px;">
-                    <p><strong>Erro ao carregar membros da planilha</strong></p>
-                    <p style="font-size: 0.9rem; margin-top: 10px;">${erro.message}</p>
-                    <details style="margin-top: 15px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
-                        <summary style="cursor: pointer; color: #888;">Detalhes técnicos</summary>
-                        <div style="background: rgba(0,0,0,0.2); padding: 10px; margin-top: 10px; border-radius: 5px; font-size: 0.8rem;">
-                            <p><strong>URL Proxy:</strong><br>${CSV_URL}</p>
-                            <p style="margin-top: 10px;"><strong>URL Original:</strong><br>${CSV_URL_ORIGINAL}</p>
-                            <p style="margin-top: 10px;">Abra o console (F12) para mais informações.</p>
-                        </div>
-                    </details>
-                </div>
-            `;
+            console.error('✗ Método alternativo também falhou:', erro);
+            mostrarErroFinal(erro);
         });
+}
+
+function mostrarErroFinal(erro) {
+    const container = document.getElementById('membros-container');
+    container.innerHTML = `
+        <div style="color: red; text-align: center; padding: 20px;">
+            <p><strong>Erro ao carregar membros da planilha</strong></p>
+            <p style="font-size: 0.9rem; margin-top: 10px;">${erro.message}</p>
+            <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <h4 style="color: #ff6b6b; margin-bottom: 10px;">💡 Soluções:</h4>
+                <ol style="text-align: left; color: #ccc; line-height: 1.6;">
+                    <li><strong>Verifique a planilha:</strong> Certifique-se que está publicada como CSV</li>
+                    <li><strong>Teste a URL:</strong> <a href="${CSV_URL_ORIGINAL}" target="_blank" style="color: #60a5fa;">Clique aqui para testar</a></li>
+                    <li><strong>Proxy temporário:</strong> Tente acessar <a href="https://cors-anywhere.herokuapp.com/" target="_blank" style="color: #60a5fa;">cors-anywhere.herokuapp.com</a> e clique em "Request temporary access"</li>
+                    <li><strong>Console:</strong> Abra F12 para mais detalhes</li>
+                </ol>
+            </div>
+            <details style="margin-top: 15px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <summary style="cursor: pointer; color: #888;">Detalhes técnicos</summary>
+                <div style="background: rgba(0,0,0,0.2); padding: 10px; margin-top: 10px; border-radius: 5px; font-size: 0.8rem;">
+                    <p><strong>URL Original:</strong><br><code style="word-break: break-all;">${CSV_URL_ORIGINAL}</code></p>
+                    <p style="margin-top: 10px;"><strong>Proxies testados:</strong> ${PROXIES.length}</p>
+                    <p style="margin-top: 10px;">Erro: ${erro.message}</p>
+                </div>
+            </details>
+        </div>
+    `;
 }
 
 // Carrega ao iniciar a página
