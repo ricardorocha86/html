@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Hackathon Enia Labs x Just Travel | Soluções em IA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .hackathon-hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 50%, #1a1d29 100%);
+            padding-top: 80px;
+        }
+
+        .hackathon-hero-bg {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.2) 0%, transparent 50%);
+            animation: gradientShift 15s ease infinite;
+            z-index: 0;
+        }
+
+        .hackathon-hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hackathon-badge {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            color: white;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            border-radius: 50px;
+            margin-bottom: 2rem;
+            animation: pulse 2s ease-in-out infinite;
+            text-transform: uppercase;
+        }
+
+        .hackathon-title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: white;
+            line-height: 1.1;
+        }
+
+        .hackathon-title .accent {
+            background: linear-gradient(135deg, #10b981, #0ea5e9, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hackathon-subtitle {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        .hackathon-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            padding: 2rem 2.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            border-color: rgba(16, 185, 129, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 0.5rem;
+        }
+
+        /* Timeline Hackathon */
+        .timeline-hackathon {
+            padding: 8rem 0;
+            background: var(--dark-bg);
+            position: relative;
+        }
+
+        .timeline-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .timeline-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #0ea5e9);
+        }
+
+        .timeline-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
+        }
+
+        .timeline-date {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-week {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .timeline-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-desc {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        /* Desafios */
+        .desafios-section {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
+            position: relative;
+        }
+
+        .desafios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .desafio-card {
+            background: var(--dark-secondary);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .desafio-number {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .desafio-card:hover {
+            transform: translateY(-15px);
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 25px 50px rgba(16, 185, 129, 0.2);
+        }
+
+        .desafio-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+            margin: 2rem 0 1.5rem;
+            line-height: 1.3;
+        }
+
+        .desafio-desc {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .desafio-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .tech-badge {
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        /* Prêmios */
+        .premios-section {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .premio-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+            padding: 3rem;
+            border-radius: 20px;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .premio-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .premio-posicao {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .premio-titulo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .premio-desc {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Inscrições */
+        .inscricoes-hack {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
+            text-align: center;
+        }
+
+        .inscricoes-hack h2 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .inscricoes-hack p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+        }
+
+        .inscricao-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .inscricao-box {
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .inscricao-box:hover {
+            border-color: rgba(16, 185, 129, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .inscricao-valor {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #10b981;
+            margin-bottom: 0.5rem;
+        }
+
+        .inscricao-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+        }
+
+        .btn-hack {
+            display: inline-block;
+            padding: 1.3rem 3.5rem;
+            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            color: white;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-hack:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Requisitos */
+        .requisitos-section {
+            padding: 6rem 0;
+            background: var(--dark-bg);
+        }
+
+        .requisitos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .requisito-card {
+            padding: 2rem;
+            background: var(--dark-secondary);
+            border-radius: 15px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .requisito-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .requisito-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .requisito-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .requisito-card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .hackathon-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .timeline-grid,
+            .desafios-grid,
+            .premios-grid,
+            .requisitos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hackathon-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegação -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="index.html" class="logo">
+                    <img src="images/logo_enilabs_semdizers.png" alt="Enia Labs">
+                    <span>ENIA LABS</span>
+                </a>
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html" class="nav-link">Home</a>
+                    
+                    <!-- Quem Somos -->
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Quem Somos</a>
+                        <div class="dropdown-menu">
+                            <a href="sobre.html" class="dropdown-item">✨ O Laboratório</a>
+                            <a href="membros.html" class="dropdown-item">👥 Equipe</a>
+                            <a href="fotos.html" class="dropdown-item">📸 Fotos</a>
+                        </div>
+                    </div>
+                    
+                    <!-- O Que Fazemos -->
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">O Que Fazemos</a>
+                        <div class="dropdown-menu">
+                            <a href="projetos.html" class="dropdown-item">📁 Projetos</a>
+                            <a href="publicacoes.html" class="dropdown-item">📚 Publicações</a>
+                            <a href="educacao.html" class="dropdown-item">🎓 Educação</a>
+                        </div>
+                    </div>
+
+                    <!-- Para Empresas -->
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Para Empresas</a>
+                        <div class="dropdown-menu">
+                            <a href="estagios.html" class="dropdown-item">💼 Estágios</a>
+                            <a href="consultoria.html" class="dropdown-item">🤝 Consultoria</a>
+                            <a href="treinamentos.html" class="dropdown-item">📚 Treinamentos</a>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Eventos</a>
+                        <div class="dropdown-menu">
+                            <a href="conversasinteligentes.html" class="dropdown-item">💬 Conversas Inteligentes</a>
+                            <a href="hackathon.html" class="dropdown-item active">🚀 Hackathon</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-social">
+                    <a href="#" class="social-btn youtube" aria-label="YouTube">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    </a>
+                    <a href="#" class="social-btn instagram" aria-label="Instagram">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </a>
+                    <a href="#" class="social-btn linkedin" aria-label="LinkedIn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </a>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hackathon-hero">
+        <div class="hackathon-hero-bg"></div>
+        <div class="container">
+            <div class="hackathon-hero-content">
+                <div class="hackathon-badge">🚀 Hackathon 2025</div>
+                <h1 class="hackathon-title">
+                    1º Hackathon de Soluções em <span class="accent">Engenharia de IA</span>
+                </h1>
+                <p class="hackathon-subtitle">
+                    Enia Labs × Just Travel: 5 semanas de desafios, criatividade e inovação para transformar o turismo
+                </p>
+                
+                <div class="hackathon-stats">
+                    <div class="stat-box">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Semanas de Desafio</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">100</div>
+                        <div class="stat-label">Vagas Disponíveis</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Desafios Reais</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Gratuito</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="timeline-hackathon">
+        <div class="timeline-container">
+            <div class="section-header">
+                <h2 class="section-title">Cronograma <span class="gradient-text">Completo</span></h2>
+                <p class="section-description">De outubro a dezembro: preparação, aprendizado e inovação</p>
+            </div>
+            
+            <div class="timeline-grid">
+                <div class="timeline-card">
+                    <div class="timeline-date">27 de Outubro</div>
+                    <div class="timeline-week">5 semanas antes</div>
+                    <div class="timeline-title">📢 Anúncio</div>
+                    <div class="timeline-desc">Divulgação oficial do hackathon e chamada para inscrições</div>
+                </div>
+
+                <div class="timeline-card">
+                    <div class="timeline-date">03 de Novembro</div>
+                    <div class="timeline-week">4 semanas antes</div>
+                    <div class="timeline-title">🎬 Live de Abertura</div>
+                    <div class="timeline-desc">Abertura oficial e início das inscrições via formulário</div>
+                </div>
+
+                <div class="timeline-card">
+                    <div class="timeline-date">10 de Novembro</div>
+                    <div class="timeline-week">3 semanas antes</div>
+                    <div class="timeline-title">📚 Minicurso 1</div>
+                    <div class="timeline-desc">IA como Recurso para Inovação com Ricardo Rocha</div>
+                </div>
+
+                <div class="timeline-card">
+                    <div class="timeline-date">17 de Novembro</div>
+                    <div class="timeline-week">2 semanas antes</div>
+                    <div class="timeline-title">💻 Minicurso 2</div>
+                    <div class="timeline-desc">Programação com IA/Cursor (hands-on)</div>
+                </div>
+
+                <div class="timeline-card">
+                    <div class="timeline-date">24 de Novembro</div>
+                    <div class="timeline-week">1 semana antes</div>
+                    <div class="timeline-title">🎨 Minicurso 3 & Mentoria 4</div>
+                    <div class="timeline-desc">WebApps com Lovable + Automação com N8N</div>
+                </div>
+
+                <div class="timeline-card">
+                    <div class="timeline-date">01 de Dezembro</div>
+                    <div class="timeline-week">Início do Desafio</div>
+                    <div class="timeline-title">⚡ Lançamento</div>
+                    <div class="timeline-desc">Divulgação dos 3 desafios. Começou a diversão!</div>
+                </div>
+
+                <div class="timeline-card">
+                    <div class="timeline-date">06 de Dezembro</div>
+                    <div class="timeline-week">Dia Final</div>
+                    <div class="timeline-title">🏆 Apresentações</div>
+                    <div class="timeline-desc">Presencial no IME-UFBA. Premiação dos vencedores!</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Desafios -->
+    <section class="desafios-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Os 3 Desafios <span class="gradient-text">Reais</span></h2>
+                <p class="section-description">Use Python, JavaScript e LLMs para resolver problemas reais do turismo</p>
+            </div>
+
+            <div class="desafios-grid">
+                <div class="desafio-card">
+                    <div class="desafio-number">1</div>
+                    <div class="desafio-title">Recomendação Inteligente de Destinos</div>
+                    <div class="desafio-desc">
+                        Criar um sistema de IA que recomenda destinos turísticos personalizados baseado em preferências dos usuários, histórico e tendências de mercado.
+                    </div>
+                    <div class="desafio-tech">
+                        <span class="tech-badge">LLMs</span>
+                        <span class="tech-badge">Python</span>
+                        <span class="tech-badge">API</span>
+                        <span class="tech-badge">RAG</span>
+                    </div>
+                </div>
+
+                <div class="desafio-card">
+                    <div class="desafio-number">2</div>
+                    <div class="desafio-title">Chatbot Assistente de Viagem 24/7</div>
+                    <div class="desafio-desc">
+                        Desenvolver um agente conversacional com IA que responda dúvidas sobre destinos, custos, documentação, e personalize sugestões em tempo real.
+                    </div>
+                    <div class="desafio-tech">
+                        <span class="tech-badge">Chatbot</span>
+                        <span class="tech-badge">JavaScript</span>
+                        <span class="tech-badge">Agents</span>
+                        <span class="tech-badge">Web</span>
+                    </div>
+                </div>
+
+                <div class="desafio-card">
+                    <div class="desafio-number">3</div>
+                    <div class="desafio-title">Análise Preditiva de Demanda</div>
+                    <div class="desafio-desc">
+                        Criar um modelo que prevê demanda turística por destino, período e perfil de cliente para auxiliar decisões estratégicas de negócio.
+                    </div>
+                    <div class="desafio-tech">
+                        <span class="tech-badge">Previsão</span>
+                        <span class="tech-badge">Análise</span>
+                        <span class="tech-badge">Python</span>
+                        <span class="tech-badge">Dados</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Requisitos e Regras -->
+    <section class="requisitos-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Requisitos &<span class="gradient-text"> Regras</span></h2>
+                <p class="section-description">O que você precisa saber para participar</p>
+            </div>
+
+            <div class="requisitos-grid">
+                <div class="requisito-card">
+                    <div class="requisito-icon">👥</div>
+                    <h3>Equipes</h3>
+                    <p>Formadas por 4-5 pessoas. Inscrições individuais aceitas - ajudaremos na formação de equipes!</p>
+                </div>
+
+                <div class="requisito-card">
+                    <div class="requisito-icon">💾</div>
+                    <h3>Entrega Obrigatória</h3>
+                    <p>Link do repositório Git com todo o código. Sem código = sem apresentação</p>
+                </div>
+
+                <div class="requisito-card">
+                    <div class="requisito-icon">⏱️</div>
+                    <h3>Tempo de Apresentação</h3>
+                    <p>3min30s a 4min30s. Acima de 5 minutos, apresentação interrompida com penalidade</p>
+                </div>
+
+                <div class="requisito-card">
+                    <div class="requisito-icon">🎓</div>
+                    <h3>Público-Alvo</h3>
+                    <p>Estudantes universitários de Salvador, cursos de exatas e tecnologia, entusiastas de IA</p>
+                </div>
+
+                <div class="requisito-card">
+                    <div class="requisito-icon">🏫</div>
+                    <h3>Presença Mínima</h3>
+                    <p>Pelo menos 2 membros da equipe no dia da apresentação presencial</p>
+                </div>
+
+                <div class="requisito-card">
+                    <div class="requisito-icon">✅</div>
+                    <h3>Validação</h3>
+                    <p>Premiação após validação técnica do código e funcionalidade pela organização</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prêmios -->
+    <section class="premios-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Prêmios & <span class="gradient-text">Reconhecimento</span></h2>
+                <p class="section-description">Além dos prêmios, compartilharemos a PI e usaremos seus projetos!</p>
+            </div>
+
+            <div class="premios-grid">
+                <div class="premio-card">
+                    <div class="premio-icon">🥇</div>
+                    <div class="premio-posicao">1º Lugar</div>
+                    <div class="premio-titulo">Campeões</div>
+                    <div class="premio-desc">Prêmio a definir + visibilidade nacional + oportunidades de carreira</div>
+                </div>
+
+                <div class="premio-card">
+                    <div class="premio-icon">🥈</div>
+                    <div class="premio-posicao">2º Lugar</div>
+                    <div class="premio-titulo">Vice-Campeões</div>
+                    <div class="premio-desc">Prêmio a definir + reconhecimento + networking com mentores</div>
+                </div>
+
+                <div class="premio-card">
+                    <div class="premio-icon">🥉</div>
+                    <div class="premio-posicao">3º Lugar</div>
+                    <div class="premio-titulo">Destaque</div>
+                    <div class="premio-desc">Prêmio a definir + certificado exclusivo + acesso a oportunidades</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inscrições -->
+    <section class="inscricoes-hack">
+        <div class="container">
+            <h2>Pronto para o <span class="gradient-text">Desafio?</span></h2>
+            <p>
+                100 vagas gratuitas para estudantes dispostos a inovar. Inscrições abertas a partir de 03 de novembro. 
+                Traga sua criatividade, sua equipe e muita disposição para criar algo incrível!
+            </p>
+
+            <div class="inscricao-boxes">
+                <div class="inscricao-box">
+                    <div class="inscricao-valor">100</div>
+                    <div class="inscricao-label">Vagas Disponíveis</div>
+                </div>
+                <div class="inscricao-box">
+                    <div class="inscricao-valor">R$ 0</div>
+                    <div class="inscricao-label">Taxa de Inscrição</div>
+                </div>
+                <div class="inscricao-box">
+                    <div class="inscricao-valor">4-5</div>
+                    <div class="inscricao-label">Pessoas/Equipe</div>
+                </div>
+            </div>
+
+            <a href="https://forms.gle/seu-link-aqui" target="_blank" class="btn-hack">
+                📝 Inscrever-se Agora
+            </a>
+            <p style="margin-top: 2rem; color: rgba(255,255,255,0.6); font-size: 0.95rem;">
+                Inscrições a partir de 03 de novembro • Seleção de participantes até 10 de novembro
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="images/logo_enilabs_semdizers.png" alt="Enia Labs">
+                    <span>ENIA LABS</span>
+                </div>
+                <p class="footer-text">Laboratório de Soluções em Engenharia de Inteligência Artificial</p>
+                <div class="footer-affiliation">
+                    <img src="images/UFBA.png" alt="UFBA" class="logo-ufba">
+                    <span>Instituto de Matemática e Estatística - UFBA</span>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Enia Labs. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
