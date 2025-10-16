@@ -81,7 +81,8 @@ window.addEventListener('scroll', () => {
 
     navLinkElements.forEach(link => {
         link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
+        // Apenas aplica active em links diretos (não dropdowns)
+        if (!link.classList.contains('dropdown-toggle') && link.getAttribute('href') === `#${current}`) {
             link.classList.add('active');
         }
     });

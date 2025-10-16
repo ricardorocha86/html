@@ -3,9 +3,720 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eventos | Enia Labs</title>
+    <title>Conversas Inteligentes | Enia Labs</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para a página do evento */
+        .evento-hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 50%, #1a1d29 100%);
+            padding-top: 80px;
+        }
+
+        .evento-hero-background {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .evento-hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .evento-badge {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-cyan));
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            border-radius: 30px;
+            margin-bottom: 2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .evento-titulo-principal {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: white;
+            line-height: 1.1;
+        }
+
+        .evento-subtitulo {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .evento-data-local {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .data-local-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.5rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .data-local-icon {
+            font-size: 2rem;
+        }
+
+        .data-local-icon.realizacao {
+            font-size: 0;
+        }
+
+        .realizacao-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem;
+        }
+
+        .data-local-texto {
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .evento-objetivos {
+            padding: 6rem 0;
+            background: var(--dark-bg);
+        }
+
+        .objetivos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .objetivo-card {
+            background: var(--dark-secondary);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .objetivo-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-purple);
+            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
+        }
+
+        .objetivo-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .objetivo-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .objetivo-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Programação com layout mais ousado */
+        .programacao-section {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1d29 50%, #2d1b3d 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .programacao-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 60%);
+            z-index: 0;
+        }
+
+        .programacao-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .programacao-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            margin-top: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .programacao-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        /* Tipos de atividades com estilos diferentes */
+        .programacao-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.5rem;
+        }
+
+        .programacao-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Abertura - Estilo especial */
+        .programacao-item.abertura {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(139, 92, 246, 0.05));
+            border-left: 4px solid rgba(168, 85, 247, 0.6);
+        }
+
+        /* Palestras - Estilo clássico */
+        .programacao-item.palestra {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(59, 130, 246, 0.04));
+            border-left: 4px solid rgba(99, 102, 241, 0.6);
+        }
+
+        /* Comunicações - Estilo moderno */
+        .programacao-item.comunicacao {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(34, 211, 238, 0.04));
+            border-left: 4px solid rgba(6, 182, 212, 0.6);
+        }
+
+        /* Coffee Break - Estilo especial */
+        .programacao-item.coffee {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.05));
+            border-left: 4px solid rgba(245, 158, 11, 0.6);
+        }
+
+        /* Conversa Provocativa - Estilo destacado */
+        .programacao-item.debate {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(219, 39, 119, 0.05));
+            border-left: 4px solid rgba(236, 72, 153, 0.6);
+        }
+
+        /* Encerramento - Estilo celebrativo */
+        .programacao-item.encerramento {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+            border-left: 4px solid rgba(16, 185, 129, 0.6);
+        }
+
+        .programacao-layout {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .programacao-hora {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .programacao-conteudo {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .palestrante-foto {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            flex-shrink: 0;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .programacao-info {
+            flex: 1;
+        }
+
+        .programacao-info h4 {
+            font-size: 1.4rem;
+            color: white;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .programacao-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .palestrante-nome {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+        }
+
+        .palestra-titulo {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        .palestrante-filiacao {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Estilos para debate com 3 debatedores */
+        .debate-debaters {
+            display: flex;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+
+        .debater-foto {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .debate-debaters-info {
+            margin-top: 0.5rem;
+        }
+
+        .debate-debaters-info p {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Badges especiais */
+        .activity-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-destaque {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1a1d29;
+        }
+
+        .badge-especial {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+        }
+
+        .badge-premio {
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+            color: white;
+        }
+
+        /* Inscrições */
+        .inscricoes-section {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 50%, #1a1d29 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .inscricoes-background {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .inscricoes-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .inscricoes-titulo {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .inscricoes-descricao {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 3rem;
+            line-height: 1.7;
+        }
+
+        .inscricoes-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .info-card {
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .info-valor {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-cyan);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-texto {
+            color: white;
+            font-weight: 500;
+        }
+
+        .btn-inscricao {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-cyan));
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            transition: var(--transition);
+            margin-top: 2rem;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-inscricao:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(168, 85, 247, 0.4);
+        }
+
+        .pagamento-info {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pagamento-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        /* Comissões */
+        .comissoes-section {
+            padding: 6rem 0;
+            background: var(--dark-bg);
+        }
+
+        .comissoes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .comissao-card {
+            background: var(--dark-secondary);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+        }
+
+        .comissao-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-purple);
+            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
+        }
+
+        .comissao-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .comissao-icon {
+            font-size: 2.5rem;
+        }
+
+        .comissao-header h3 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .comissao-membros {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .comissao-membros li {
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .membro-nome {
+            font-weight: 700;
+            color: #000000;
+            font-size: 1rem;
+        }
+
+        .membro-filiacao {
+            color: #666666;
+            font-weight: normal;
+        }
+
+        /* Realização, Apoio e Parceiros */
+        .patrocinadores-section {
+            padding: 4rem 0;
+            background: var(--dark-secondary);
+        }
+
+        .patrocinadores-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 3fr;
+            gap: 2rem;
+            margin-top: 3rem;
+            align-items: start;
+        }
+
+        .patrocinador-categoria {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .patrocinador-categoria:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .patrocinador-categoria h3 {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logo-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            text-align: center;
+        }
+
+        .apoio-logos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .parceiros-logos {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .logo-placeholder {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .patrocinador-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .patrocinador-logo:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .patrocinador-nome {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .evento-data-local {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .programacao-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .programacao-hora {
+                font-size: 1.1rem;
+                padding: 1rem;
+            }
+
+            .programacao-conteudo {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .inscricoes-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .palestrante-foto {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+
+            .debater-foto {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+
+            .debate-debaters {
+                gap: 0.25rem;
+                margin-right: 0.5rem;
+            }
+
+            .comissoes-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .patrocinadores-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .patrocinador-categoria {
+                padding: 1.5rem;
+            }
+
+            .patrocinador-categoria h3 {
+                font-size: 1.2rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .apoio-logos {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+
+            .parceiros-logos {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+
+            .patrocinador-logo {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
 </head>
 <body>
         <!-- Navegação -->
@@ -70,55 +781,381 @@
         </div>
     </nav>
 
-    <!-- Hero -->
-    <section class="page-hero">
-        <div class="hero-background"></div>
+    <!-- Hero do Evento -->
+    <section class="evento-hero">
+        <div class="evento-hero-background"></div>
         <div class="container">
-            <div class="page-hero-content">
-                <div class="breadcrumb">
-                    <a href="index.html">Home</a>
-                    <span>/</span>
-                    <span>Eventos</span>
-                </div>
-                <h1 class="page-title">
-                    Nossos <span class="gradient-text">Eventos</span>
+            <div class="evento-hero-content">
+                <div class="evento-badge">WORKSHOP</div>
+                <h1 class="evento-titulo-principal">
+                    Conversas <span class="gradient-text">Inteligentes</span>
                 </h1>
-                <p class="page-subtitle">Encontros, palestras e discussões sobre IA e inovação</p>
+                <p class="evento-subtitulo">
+                    Um encontro entre a academia e o mercado para discutir as reais necessidades 
+                    de inteligência artificial na sociedade
+                </p>
+                
+                <div class="evento-data-local">
+                    <div class="data-local-item">
+                        <div class="data-local-icon">📅</div>
+                        <div class="data-local-texto">
+                            <strong>29 de Outubro</strong><br>
+                            2025
+                        </div>
+                    </div>
+                    <div class="data-local-item">
+                        <div class="data-local-icon">📍</div>
+                        <div class="data-local-texto">
+                            <strong>Auditório Maria Zezé</strong><br>
+                            Saguão do IME - UFBA
+                        </div>
+                    </div>
+                    <div class="data-local-item">
+                        <div class="data-local-icon realizacao">
+                            <img src="images/logo_enilabs_semdizers.png" alt="Enia Labs" class="realizacao-logo">
+                        </div>
+                        <div class="data-local-texto">
+                            <strong>Realização</strong><br>
+                            Enia Labs
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Evento Destaque -->
-    <section class="evento-destaque-section">
-        <div class="evento-background"></div>
+    <!-- Objetivos do Evento -->
+    <section class="evento-objetivos">
         <div class="container">
-            <div class="evento-content">
-                <div class="evento-tag">EM BREVE</div>
-                <h2 class="evento-titulo">
-                    Conversas <span class="gradient-text">Inteligentes</span>
-                </h2>
-                <p class="evento-descricao">
-                    Um encontro entre a academia e o mercado para discutir as reais necessidades 
-                    de inteligência artificial na sociedade... unindo forças para criar as soluções 
-                    relevantes com IA generativa. Um festival de aplicação de modelos de Generative AI.
+            <div class="section-header">
+                <h2 class="section-title">Objetivos desta <span class="gradient-text">Edição</span></h2>
+                <p class="section-description">
+                    Propósito desta edição do Conversas Inteligentes é conectar pessoas, 
+                    ideias e soluções inovadoras em IA
                 </p>
-                <div class="evento-info">
-                    <div class="info-item">
-                        <span class="info-icon">💬</span>
-                        <span class="info-text">Debates sobre IA e sociedade</span>
+            </div>
+            
+            <div class="objetivos-grid">
+                <div class="objetivo-card">
+                    <div class="objetivo-icon">🚀</div>
+                    <h3>Mostrar Trabalhos Inovadores</h3>
+                    <p>Apresentar soluções inovadoras usando LLMs modernos e IA em geral, 
+                    demonstrando o potencial real da tecnologia.</p>
+                </div>
+                
+                <div class="objetivo-card">
+                    <div class="objetivo-icon">🤝</div>
+                    <h3>Integração da Comunidade</h3>
+                    <p>Acolher a comunidade de tecnologia junto à UFBA para integração 
+                    e trabalhos conjuntos entre academia e mercado.</p>
+                </div>
+                
+                <div class="objetivo-card">
+                    <div class="objetivo-icon">📚</div>
+                    <h3>Atualização e Inspiração</h3>
+                    <p>Proporcionar atualização, inspiração e muito networking para 
+                    profissionais de todos os cantos de Salvador.</p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Programação -->
+    <section class="programacao-section">
+        <div class="container">
+            <div class="programacao-content">
+                <div class="section-header">
+                    <h2 class="section-title"><span style="color: #ffffff;">Programação</span> <span class="gradient-text">Completa</span></h2>
+                    <p class="section-description">
+                        Uma jornada completa de aprendizado, networking e descobertas em IA
+                    </p>
+                </div>
+                
+                <div class="programacao-card">
+                    <div class="programacao-grid">
+                        <!-- Abertura -->
+                        <div class="programacao-item abertura">
+                            <div class="activity-badge badge-destaque">🎯 DESTAQUE</div>
+                            <div class="programacao-layout">
+                                <div class="programacao-hora">14h</div>
+                                <div class="programacao-conteudo">
+                                    <div class="palestrante-foto">🎯</div>
+                                    <div class="programacao-info">
+                                        <h4>Abertura</h4>
+                                        <p>Boas-vindas e apresentação do evento</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!-- Palestra 1 -->
+                    <div class="programacao-item palestra">
+                        <div class="programacao-layout">
+                            <div class="programacao-hora">14h</div>
+                            <div class="programacao-conteudo">
+                                <div class="palestrante-foto">👨‍💼</div>
+                                <div class="programacao-info">
+                                    <h4>Palestra 1</h4>
+                                    <p class="palestra-titulo">Título da Palestra a ser definido</p>
+                                    <p><span class="palestrante-nome">Nome do Palestrante</span></p>
+                                    <p class="palestrante-filiacao">Filiação Acadêmica/Profissional</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-icon">🎤</span>
-                        <span class="info-text">Palestrantes especialistas</span>
+
+                    <!-- Palestra 2 -->
+                    <div class="programacao-item palestra">
+                        <div class="programacao-layout">
+                            <div class="programacao-hora">14h30</div>
+                            <div class="programacao-conteudo">
+                                <div class="palestrante-foto">👩‍💼</div>
+                                <div class="programacao-info">
+                                    <h4>Palestra 2</h4>
+                                    <p class="palestra-titulo">Título da Palestra a ser definido</p>
+                                    <p><span class="palestrante-nome">Nome do Palestrante</span></p>
+                                    <p class="palestrante-filiacao">Filiação Acadêmica/Profissional</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-icon">🤝</span>
-                        <span class="info-text">Networking e colaboração</span>
+
+                    <!-- Comunicação 1 -->
+                    <div class="programacao-item comunicacao">
+                        <div class="programacao-layout">
+                            <div class="programacao-hora">15h00</div>
+                            <div class="programacao-conteudo">
+                                <div class="palestrante-foto">🎤</div>
+                                <div class="programacao-info">
+                                    <h4>Comunicação 1</h4>
+                                    <p class="palestra-titulo">Título da Comunicação a ser definido</p>
+                                    <p><span class="palestrante-nome">Nome do Apresentador</span></p>
+                                    <p class="palestrante-filiacao">Filiação Acadêmica/Profissional</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comunicação 2 -->
+                    <div class="programacao-item comunicacao">
+                        <div class="programacao-layout">
+                            <div class="programacao-hora">15h20</div>
+                            <div class="programacao-conteudo">
+                                <div class="palestrante-foto">📊</div>
+                                <div class="programacao-info">
+                                    <h4>Comunicação 2</h4>
+                                    <p class="palestra-titulo">Título da Comunicação a ser definido</p>
+                                    <p><span class="palestrante-nome">Nome do Apresentador</span></p>
+                                    <p class="palestrante-filiacao">Filiação Acadêmica/Profissional</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comunicação 3 - SuperApps Enia Labs -->
+                    <div class="programacao-item comunicacao">
+                        <div class="activity-badge badge-premio">🏆 SUPER APPS</div>
+                        <div class="programacao-layout">
+                            <div class="programacao-hora">15h40</div>
+                            <div class="programacao-conteudo">
+                                <div class="palestrante-foto">🚀</div>
+                                <div class="programacao-info">
+                                    <h4>Comunicação 3</h4>
+                                    <p class="palestra-titulo">Apresentação dos SuperApps do Enia Labs</p>
+                                    <p><span class="palestrante-nome">Equipe Enia Labs</span></p>
+                                    <p class="palestrante-filiacao">Laboratório de Soluções em Engenharia de IA - UFBA</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coffee Break -->
+                    <div class="programacao-item coffee">
+                        <div class="activity-badge badge-especial">☕ NETWORKING</div>
+                        <div class="programacao-layout">
+                            <div class="programacao-hora">16h</div>
+                            <div class="programacao-conteudo">
+                                <div class="palestrante-foto">☕</div>
+                                <div class="programacao-info">
+                                    <h4>Coffee-Break Delicia</h4>
+                                    <p>Momento de networking e interação entre os participantes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversa Provocativa -->
+                    <div class="programacao-item debate">
+                        <div class="activity-badge badge-especial">💬 DEBATE</div>
+                        <div class="programacao-layout">
+                            <div class="programacao-hora">16h30</div>
+                            <div class="programacao-conteudo">
+                                <div class="debate-debaters">
+                                    <div class="debater-foto">👨‍💼</div>
+                                    <div class="debater-foto">👩‍💼</div>
+                                    <div class="debater-foto">👨‍🔬</div>
+                                </div>
+                                <div class="programacao-info">
+                                    <h4>Conversa Provocativa</h4>
+                                    <p class="palestra-titulo">Debate sobre IA e sociedade</p>
+                                    <div class="debate-debaters-info">
+                                        <p><span class="palestrante-nome">Nome do Debatedor 1</span></p>
+                                        <p class="palestrante-filiacao">Filiação Acadêmica/Profissional</p>
+                                        <p><span class="palestrante-nome">Nome do Debatedor 2</span></p>
+                                        <p class="palestrante-filiacao">Filiação Acadêmica/Profissional</p>
+                                        <p><span class="palestrante-nome">Nome do Debatedor 3</span></p>
+                                        <p class="palestrante-filiacao">Filiação Acadêmica/Profissional</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Encerramento -->
+                    <div class="programacao-item encerramento">
+                        <div class="activity-badge badge-destaque">🎉 FIM</div>
+                        <div class="programacao-layout">
+                            <div class="programacao-hora">18h00</div>
+                            <div class="programacao-conteudo">
+                                <div class="palestrante-foto">🎉</div>
+                                <div class="programacao-info">
+                                    <h4>Encerramento</h4>
+                                    <p>Considerações finais e próximos passos</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     </div>
                 </div>
-                <div class="evento-cta">
-                    <p class="cta-subtitle">Seja notificado quando as inscrições abrirem</p>
-                    <a href="#" class="btn btn-primary btn-large">Cadastre seu interesse</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inscrições -->
+    <section class="inscricoes-section">
+        <div class="inscricoes-background"></div>
+        <div class="container">
+            <div class="inscricoes-content">
+                <h2 class="inscricoes-titulo">Inscrições <span class="gradient-text">Limitadas</span></h2>
+                <p class="inscricoes-descricao">
+                    Garanta já sua vaga neste evento exclusivo. Vagas limitadas para garantir 
+                    uma experiência de qualidade e networking efetivo.
+                </p>
+                
+                <div class="inscricoes-info">
+                    <div class="info-card">
+                        <div class="info-valor">R$ 20</div>
+                        <div class="info-texto">Investimento único</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-valor">💳</div>
+                        <div class="info-texto">Pagamento via PIX</div>
+                    </div>
+                </div>
+                
+                <a href="#" class="btn-inscricao" id="btnInscricao">
+                    🎫 Garantir Minha Vaga
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comissões -->
+    <section class="comissoes-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Comissões <span class="gradient-text">Organizadoras</span></h2>
+                <p class="section-description">
+                    Profissionais dedicados que tornaram este evento possível
+                </p>
+            </div>
+            
+            <div class="comissoes-grid">
+                <!-- Comissão Organizadora -->
+                <div class="comissao-card">
+                    <div class="comissao-header">
+                        <div class="comissao-icon">🎯</div>
+                        <h3>Comissão Organizadora</h3>
+                    </div>
+                    <ul class="comissao-membros">
+                        <li><span class="membro-nome">Carlos Eduardo Silva</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                        <li><span class="membro-nome">Ana Paula Santos</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                        <li><span class="membro-nome">Marcos Roberto Lima</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                        <li><span class="membro-nome">Fernanda Costa</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                        <li><span class="membro-nome">Rafael Oliveira</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                        <li><span class="membro-nome">Juliana Mendes</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                    </ul>
+                </div>
+
+                <!-- Comissão Científica -->
+                <div class="comissao-card">
+                    <div class="comissao-header">
+                        <div class="comissao-icon">🔬</div>
+                        <h3>Comissão Científica</h3>
+                    </div>
+                    <ul class="comissao-membros">
+                        <li><span class="membro-nome">Ricardo Rocha</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                        <li><span class="membro-nome">Maria Fernanda Alves</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                        <li><span class="membro-nome">João Carlos Pereira</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                        <li><span class="membro-nome">Patricia Rodrigues</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                        <li><span class="membro-nome">Antonio Silva</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                        <li><span class="membro-nome">Beatriz Nascimento</span> <span class="membro-filiacao">Universidade Federal da Bahia</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Realização, Apoio e Parceiros -->
+    <section class="patrocinadores-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Realização, <span class="gradient-text">Apoio</span> e Parceiros</h2>
+            </div>
+            
+            <div class="patrocinadores-grid">
+                <!-- Realização - 1 coluna -->
+                <div class="patrocinador-categoria">
+                    <h3>Realização</h3>
+                    <div class="logo-item">
+                        <img src="images/logo_enilabs_semdizers.png" alt="Enia Labs" class="patrocinador-logo">
+                        <span class="patrocinador-nome">Enia Labs</span>
+                    </div>
+                </div>
+                
+                <!-- Apoio - 2 colunas -->
+                <div class="patrocinador-categoria apoio-span">
+                    <h3>Apoio</h3>
+                    <div class="apoio-logos">
+                        <div class="logo-item">
+                            <img src="images/apoio/sally.jpg" alt="Sally" class="patrocinador-logo">
+                            <span class="patrocinador-nome">Sally</span>
+                        </div>
+                        <div class="logo-item">
+                            <img src="images/apoio/cer.jpg" alt="CER-UFBA" class="patrocinador-logo">
+                            <span class="patrocinador-nome">CER-UFBA</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Parceiros - 3 colunas -->
+                <div class="patrocinador-categoria parceiros-span">
+                    <h3>Parceiros</h3>
+                    <div class="parceiros-logos">
+                        <div class="logo-item">
+                            <img src="images/apoio/ufba.jpg" alt="UFBA" class="patrocinador-logo">
+                            <span class="patrocinador-nome">UFBA</span>
+                        </div>
+                        <div class="logo-item">
+                            <img src="images/apoio/dest.jpg" alt="DEST" class="patrocinador-logo">
+                            <span class="patrocinador-nome">DEST</span>
+                        </div>
+                        <div class="logo-item">
+                            <div class="logo-placeholder">Logo 3</div>
+                            <span class="patrocinador-nome">Parceiro</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -163,6 +1200,13 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        // Placeholder para integração com AbacatePay
+        document.getElementById('btnInscricao').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('🚧 Sistema de pagamento em desenvolvimento!\n\nEm breve você poderá fazer sua inscrição diretamente aqui via AbacatePay.\n\nPor enquanto, entre em contato conosco para garantir sua vaga!');
+        });
+    </script>
 </body>
 </html>
 

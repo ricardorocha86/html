@@ -1,12 +1,14 @@
 // URL do CSV publicado do Google Sheets
 const CSV_URL_ORIGINAL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScvFUk8IBaOUAlGWC3l8Emtsvev281hcnNoGm_1hCRKLMbb4XmLFsc6x7NySS8Rlds6x5Narz-Lfm9/pub?gid=0&single=true&output=csv';
 
+// Cache config
+const CACHE_KEY = 'enialabs_membros_cache';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+
 // Lista de proxies CORS para tentar (em ordem de preferência)
 const PROXIES = [
-    '/.netlify/functions/csv-proxy', // Netlify Function (melhor opção)
+    '/.netlify/functions/csv-proxy',
     `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV_URL_ORIGINAL)}`,
-    `https://cors-anywhere.herokuapp.com/${CSV_URL_ORIGINAL}`,
-    `https://thingproxy.freeboard.io/fetch/${CSV_URL_ORIGINAL}`,
     `https://corsproxy.io/?${encodeURIComponent(CSV_URL_ORIGINAL)}`
 ];
 
@@ -17,7 +19,7 @@ function criarCardCoordenador(membro) {
         <div class="membro-card-especial">
             <div class="badge-coordenador">Coordenador</div>
             <div class="membro-foto-grande">
-                <img src="membros/${membro.ImagemURL}" alt="${membro.Nome}" class="foto-coordenador-real" onerror="this.src='membros/placeholder.jpg'">
+                <img src="membros/${membro.ImagemURL}" alt="${membro.Nome}" class="foto-coordenador-real" loading="lazy" onerror="this.src='membros/placeholder.jpg'">
             </div>
             <h3 class="membro-nome-destaque">${membro.Nome}</h3>
             <p class="membro-titulo">${membro['Função']}</p>
@@ -33,7 +35,7 @@ function criarCardMembroPadrao(membro) {
     return `
         <div class="membro-card-padrao">
             <div class="membro-foto-grande">
-                <img src="membros/${membro.ImagemURL}" alt="${membro.Nome}" onerror="this.src='membros/placeholder.jpg'">
+                <img src="membros/${membro.ImagemURL}" alt="${membro.Nome}" loading="lazy" onerror="this.src='membros/placeholder.jpg'">
             </div>
             <h3 class="membro-nome-destaque">${membro.Nome}</h3>
             <p class="membro-titulo">${membro['Função']}</p>
@@ -46,12 +48,12 @@ function criarCardMembroPadrao(membro) {
 // Cria links sociais (apenas os preenchidos)
 function criarLinksSociais(membro) {
     const links = [];
-    if (membro.Email) links.push(`<a href="mailto:${membro.Email}" class="btn-social btn-email" title="Email" aria-label="Email"><svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/></svg></a>`);
-    if (membro.LinkLinkedin) links.push(`<a href="${membro.LinkLinkedin}" class="btn-social btn-linkedin" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/></svg></a>`);
-    if (membro.LinkGithub) links.push(`<a href="${membro.LinkGithub}" class="btn-social btn-github" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub"><svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>`);
-    if (membro.LinkInstagram) links.push(`<a href="${membro.LinkInstagram}" class="btn-social btn-instagram" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram"><svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg></a>`);
-    if (membro.LinkLattes) links.push(`<a href="${membro.LinkLattes}" class="btn-social btn-lattes" target="_blank" rel="noopener" title="Lattes" aria-label="Lattes"><svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M8.05 9.6c.336 0 .504-.24.554-.627.04-.534.198-.815.847-1.26.673-.475 1.049-1.09 1.049-1.986 0-1.325-.92-2.227-2.262-2.227-1.02 0-1.792.492-2.1 1.29A1.71 1.71 0 0 0 6 5.48c0 .393.203.64.545.64.272 0 .455-.147.564-.51.158-.592.525-.915 1.074-.915.61 0 1.03.446 1.03 1.084 0 .563-.208.885-.822 1.325-.619.433-.926.914-.926 1.64v.111c0 .428.208.745.585.745z"/><path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911l-1.318.016z"/><path d="M7.001 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0z"/></svg></a>`);
-    if (membro.LinkSitePessoal) links.push(`<a href="${membro.LinkSitePessoal}" class="btn-social btn-website" target="_blank" rel="noopener" title="Site Pessoal" aria-label="Site Pessoal"><svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/></svg></a>`);
+    if (membro.Email) links.push(`<a href="mailto:${membro.Email}" class="btn-social btn-email" title="Email" aria-label="Email"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>`);
+    if (membro.LinkLinkedin) links.push(`<a href="${membro.LinkLinkedin}" class="btn-social btn-linkedin" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>`);
+    if (membro.LinkGithub) links.push(`<a href="${membro.LinkGithub}" class="btn-social btn-github" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>`);
+    if (membro.LinkInstagram) links.push(`<a href="${membro.LinkInstagram}" class="btn-social btn-instagram" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>`);
+    if (membro.LinkLattes) links.push(`<a href="${membro.LinkLattes}" class="btn-social btn-lattes" target="_blank" rel="noopener" title="Lattes" aria-label="Lattes"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 22c-5.514 0-10-4.486-10-10s4.486-10 10-10 10 4.486 10 10-4.486 10-10 10zm1-17h-2v6h-6v2h6v6h2v-6h6v-2h-6z"/></svg></a>`);
+    if (membro.LinkSitePessoal) links.push(`<a href="${membro.LinkSitePessoal}" class="btn-social btn-website" target="_blank" rel="noopener" title="Site Pessoal" aria-label="Site Pessoal"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1 16.947v1.053h-1v-.998c-1.035-.018-2.106-.265-3-.727l.455-1.644c.956.371 2.229.765 3.225.54 1.149-.26 1.385-1.442.114-2.011-.931-.434-3.778-.805-3.778-3.243 0-1.363 1.039-2.583 2.984-2.85v-1.067h1v1.018c.724.019 1.536.145 2.442.42l-.362 1.647c-.768-.27-1.616-.515-2.442-.465-1.489.087-1.62 1.376-.581 1.916 1.033.535 3.86.998 3.86 3.358 0 1.345-.974 2.631-2.917 2.053z"/></svg></a>`);
     return links.join('');
 }
 
@@ -78,11 +80,47 @@ function renderizarMembros(membros) {
     }
 }
 
+// Verifica cache
+function obterCache() {
+    try {
+        const cache = localStorage.getItem(CACHE_KEY);
+        if (cache) {
+            const { dados, timestamp } = JSON.parse(cache);
+            if (Date.now() - timestamp < CACHE_DURATION) {
+                return dados;
+            }
+        }
+    } catch (e) {
+        console.warn('Erro ao ler cache:', e);
+    }
+    return null;
+}
+
+// Salva no cache
+function salvarCache(dados) {
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+            dados: dados,
+            timestamp: Date.now()
+        }));
+    } catch (e) {
+        console.warn('Erro ao salvar cache:', e);
+    }
+}
+
 // Tenta carregar CSV usando diferentes proxies
 function carregarMembros() {
     const container = document.getElementById('membros-container');
-    container.innerHTML = '<p style="text-align: center; color: #888;">Carregando membros da planilha...</p>';
     
+    // Tenta usar cache primeiro
+    const dadosCache = obterCache();
+    if (dadosCache) {
+        console.log('✓ Dados carregados do cache');
+        renderizarMembros(dadosCache);
+        return;
+    }
+    
+    container.innerHTML = '<p style="text-align: center; color: #888;">Carregando membros da planilha...</p>';
     tentarProxies(0);
 }
 
@@ -110,11 +148,12 @@ function tentarProxies(indiceProxy) {
                     header: true,
                     skipEmptyLines: true
                 });
+                salvarCache(resultado.data);
                 renderizarMembros(resultado.data);
             })
             .catch(erro => {
                 console.error(`✗ Netlify Function falhou:`, erro);
-                setTimeout(() => tentarProxies(indiceProxy + 1), 500);
+                setTimeout(() => tentarProxies(indiceProxy + 1), 200);
             });
         return;
     }
@@ -128,19 +167,17 @@ function tentarProxies(indiceProxy) {
         complete: function(resultado) {
             console.log(`✓ CSV carregado com sucesso via proxy ${indiceProxy + 1}!`);
             console.log('Total de linhas:', resultado.data.length);
-            console.log('Primeira linha:', resultado.data[0]);
             
             if (resultado.errors.length > 0) {
                 console.warn('Avisos:', resultado.errors);
             }
             
+            salvarCache(resultado.data);
             renderizarMembros(resultado.data);
         },
         error: function(erro, arquivo) {
             console.error(`✗ Proxy ${indiceProxy + 1} falhou:`, erro);
-            
-            // Tenta próximo proxy
-            setTimeout(() => tentarProxies(indiceProxy + 1), 500);
+            setTimeout(() => tentarProxies(indiceProxy + 1), 200);
         }
     });
 }
@@ -160,14 +197,13 @@ function carregarMembrosAlternativo() {
         })
         .then(csvTexto => {
             console.log('✓ Fetch alternativo bem-sucedido!');
-            console.log('Primeiros 200 caracteres:', csvTexto.substring(0, 200));
             
             const resultado = Papa.parse(csvTexto, {
                 header: true,
                 skipEmptyLines: true
             });
             
-            console.log('Dados parseados:', resultado.data);
+            salvarCache(resultado.data);
             renderizarMembros(resultado.data);
         })
         .catch(erro => {
