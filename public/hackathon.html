@@ -7,13 +7,22 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.9; } }
+        @keyframes gradientShift { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); } 50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.8); } }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
         .hackathon-hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 50%, #1a1d29 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
             padding-top: 80px;
         }
 
@@ -21,10 +30,20 @@
             position: absolute;
             inset: 0;
             background: 
-                radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.2) 0%, transparent 50%);
+                radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.3) 0%, transparent 50%);
             animation: gradientShift 15s ease infinite;
             z-index: 0;
+        }
+
+        .hackathon-hero-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(168, 85, 247, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 90% 20%, rgba(6, 182, 212, 0.2) 0%, transparent 40%);
+            animation: rotateSlow 30s linear infinite;
         }
 
         .hackathon-hero-content {
@@ -34,12 +53,15 @@
             max-width: 1100px;
             margin: 0 auto;
             padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .hackathon-badge {
             display: inline-block;
             padding: 1rem 2.5rem;
-            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
             color: white;
             font-weight: 800;
             font-size: 1.2rem;
@@ -48,14 +70,18 @@
             margin-bottom: 2rem;
             animation: pulse 2s ease-in-out infinite;
             text-transform: uppercase;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+            border: 2px solid rgba(14, 165, 233, 0.5);
         }
 
         .hackathon-title {
             font-size: clamp(2.5rem, 8vw, 5rem);
             font-weight: 900;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             color: white;
             line-height: 1.1;
+            animation: slideInLeft 1s ease;
+            text-shadow: 0 0 40px rgba(16, 185, 129, 0.4), 0 0 80px rgba(99, 102, 241, 0.2);
         }
 
         .hackathon-title .accent {
@@ -63,36 +89,94 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.3));
+            animation: float 4s ease-in-out infinite;
         }
 
         .hackathon-subtitle {
             font-size: 1.4rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 3rem;
             font-weight: 300;
+            animation: slideInRight 1s ease;
+            max-width: 700px;
+        }
+
+        .hackathon-hero-decorations {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .decoration {
+            position: absolute;
+            opacity: 0.15;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .decoration-1 {
+            top: 10%;
+            left: 5%;
+            font-size: 8rem;
+            animation-delay: 0s;
+        }
+
+        .decoration-2 {
+            top: 20%;
+            right: 8%;
+            font-size: 6rem;
+            animation-delay: 1s;
+            animation-direction: reverse;
+        }
+
+        .decoration-3 {
+            bottom: 15%;
+            left: 10%;
+            font-size: 7rem;
+            animation-delay: 2s;
+        }
+
+        .decoration-4 {
+            bottom: 20%;
+            right: 5%;
+            font-size: 6rem;
+            animation-delay: 1.5s;
+            animation-direction: reverse;
         }
 
         .hackathon-stats {
             display: flex;
             justify-content: center;
-            gap: 3rem;
-            margin: 3rem 0;
+            gap: 2rem;
+            margin: 4rem 0;
             flex-wrap: wrap;
+            width: 100%;
         }
 
         .stat-box {
-            padding: 2rem 2.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            border: 2px solid rgba(16, 185, 129, 0.3);
+            padding: 2rem 2rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(99, 102, 241, 0.15));
+            border-radius: 15px;
+            border: 2px solid rgba(16, 185, 129, 0.4);
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
+            position: relative;
+            flex: 1;
+            min-width: 140px;
+            max-width: 180px;
+            animation: float 3s ease-in-out infinite;
         }
 
+        .stat-box:nth-child(2) { animation-delay: 0.2s; }
+        .stat-box:nth-child(3) { animation-delay: 0.4s; }
+        .stat-box:nth-child(4) { animation-delay: 0.6s; }
+
         .stat-box:hover {
-            border-color: rgba(16, 185, 129, 0.6);
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.8);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(99, 102, 241, 0.25));
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 60px rgba(16, 185, 129, 0.3);
         }
 
         .stat-number {
@@ -105,134 +189,215 @@
         }
 
         .stat-label {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.75);
             margin-top: 0.5rem;
         }
 
-        /* Timeline Hackathon */
+        /* Timeline - Layout em zíper */
         .timeline-hackathon {
-            padding: 8rem 0;
+            padding: 6rem 2rem;
             background: var(--dark-bg);
             position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-hackathon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent 0%, rgba(16, 185, 129, 0.3) 50%, transparent 100%);
+            opacity: 0;
         }
 
         .timeline-container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 0 2rem;
         }
 
         .timeline-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2.5rem;
-            margin-top: 4rem;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .timeline-grid::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, 
+                rgba(16, 185, 129, 0) 0%,
+                rgba(16, 185, 129, 0.3) 25%,
+                rgba(16, 185, 129, 0.5) 50%,
+                rgba(16, 185, 129, 0.3) 75%,
+                rgba(16, 185, 129, 0) 100%);
+            pointer-events: none;
         }
 
         .timeline-card {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
-            padding: 2.5rem;
-            border-radius: 20px;
-            border: 2px solid rgba(16, 185, 129, 0.2);
-            transition: all 0.3s ease;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: center;
+            animation: slideInLeft 0.8s ease;
             position: relative;
-            overflow: hidden;
         }
 
         .timeline-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #10b981, #0ea5e9);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            border-radius: 50%;
+            border: 4px solid var(--dark-bg);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+            z-index: 2;
+            top: 1.5rem;
         }
 
-        .timeline-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(16, 185, 129, 0.5);
-            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
+        .timeline-card:nth-child(even) {
+            grid-template-columns: 1fr 1fr;
+            direction: rtl;
+            animation: slideInRight 0.8s ease;
+        }
+
+        .timeline-card:nth-child(even) > * {
+            direction: ltr;
+        }
+
+        .timeline-card-content {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+            border-radius: 15px;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-card-content:hover {
+            border-color: rgba(16, 185, 129, 0.7);
+            box-shadow: 0 20px 50px rgba(16, 185, 129, 0.2);
+            transform: translateY(-5px);
         }
 
         .timeline-date {
-            font-size: 1.3rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 900;
             color: #10b981;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
         .timeline-week {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             font-style: italic;
         }
 
         .timeline-title {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: white;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .timeline-desc {
             color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
+            line-height: 1.5;
+            font-size: 0.9rem;
         }
 
-        /* Desafios */
+        /* Desafios - Layout com gradientes diagonais */
         .desafios-section {
-            padding: 8rem 0;
+            padding: 8rem 2rem;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
             position: relative;
+            overflow: hidden;
         }
 
         .desafios-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2.5rem;
             margin-top: 4rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .desafio-card {
-            background: var(--dark-secondary);
-            padding: 2.5rem;
+            padding: 3rem;
+            background: linear-gradient(135deg, #1e293b 0%, #1e293b 100%);
             border-radius: 20px;
-            border: 2px solid rgba(99, 102, 241, 0.2);
+            border: 2px solid rgba(16, 185, 129, 0.3);
             transition: all 0.4s ease;
             position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 400px;
+        }
+
+        .desafio-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .desafio-card:hover {
+            transform: translateY(-15px) rotateY(5deg);
+            border-color: rgba(16, 185, 129, 0.8);
+            box-shadow: 0 30px 80px rgba(16, 185, 129, 0.3), inset 0 0 40px rgba(16, 185, 129, 0.1);
+        }
+
+        .desafio-card:hover::before {
+            top: -30%;
+            right: -30%;
         }
 
         .desafio-number {
-            position: absolute;
-            top: -15px;
-            left: 30px;
-            width: 60px;
-            height: 60px;
+            position: relative;
+            z-index: 1;
+            width: 70px;
+            height: 70px;
             background: linear-gradient(135deg, #10b981, #0ea5e9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 900;
             color: white;
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-        }
-
-        .desafio-card:hover {
-            transform: translateY(-15px);
-            border-color: rgba(16, 185, 129, 0.5);
-            box-shadow: 0 25px 50px rgba(16, 185, 129, 0.2);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
         }
 
         .desafio-title {
             font-size: 1.6rem;
             font-weight: 700;
             color: white;
-            margin: 2rem 0 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
             line-height: 1.3;
         }
 
@@ -240,52 +405,466 @@
             color: rgba(255, 255, 255, 0.8);
             line-height: 1.7;
             margin-bottom: 1.5rem;
+            flex-grow: 1;
+            position: relative;
+            z-index: 1;
         }
 
         .desafio-tech {
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
+            position: relative;
+            z-index: 1;
         }
 
         .tech-badge {
             padding: 0.5rem 1rem;
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(99, 102, 241, 0.2));
+            border: 1px solid rgba(16, 185, 129, 0.4);
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #10b981;
             font-weight: 600;
+            transition: all 0.3s ease;
         }
 
-        /* Prêmios */
+        .tech-badge:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(99, 102, 241, 0.4));
+            border-color: rgba(16, 185, 129, 0.8);
+        }
+
+        /* Mentorias Exclusivas */
+        .mentorias-section {
+            padding: 8rem 2rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mentorias-section::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .mentorias-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            margin-top: 4rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mentoria-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(99, 102, 241, 0.15));
+            padding: 2.5rem;
+            border-radius: 25px;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .mentoria-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 25px;
+        }
+
+        .mentoria-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            border-color: rgba(16, 185, 129, 0.7);
+            box-shadow: 0 30px 80px rgba(16, 185, 129, 0.3);
+        }
+
+        .mentoria-card:hover::before {
+            opacity: 1;
+        }
+
+        .mentoria-photo {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(99, 102, 241, 0.2));
+            border: 3px solid rgba(16, 185, 129, 0.4);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .mentoria-number {
+            display: none;
+        }
+
+        .mentoria-speaker {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .mentoria-card h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mentoria-desc {
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+            font-size: 0.95rem;
+        }
+
+        .mentoria-topics {
+            width: 100%;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+            padding: 1.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 15px;
+            margin-top: 1rem;
+        }
+
+        .mentoria-topics h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mentoria-topics ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mentoria-topics li {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+            padding-left: 1.2rem;
+            position: relative;
+        }
+
+        .mentoria-topics li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .mentorias-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .mentoria-card h3 {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Requisitos - Layout em hexágonos/tiles */
+        .requisitos-section {
+            padding: 8rem 2rem;
+            background: var(--dark-bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .requisitos-section::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .requisitos-section::after {
+            content: '';
+            position: absolute;
+            bottom: -200px;
+            right: 10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        .requisitos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .requisito-card {
+            padding: 2.5rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(99, 102, 241, 0.12));
+            border-radius: 20px;
+            border: 2px solid rgba(16, 185, 129, 0.25);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            text-align: center;
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 280px;
+        }
+
+        .requisito-card::before {
+            content: '';
+            position: absolute;
+            inset: -100%;
+            background: conic-gradient(from 0deg, rgba(16, 185, 129, 0.3), rgba(99, 102, 241, 0.3), rgba(16, 185, 129, 0.3));
+            animation: rotateSlow 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .requisito-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .requisito-card:hover {
+            transform: scale(1.08) rotateY(8deg) rotateX(-5deg);
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 25px 60px rgba(16, 185, 129, 0.25), inset 0 0 30px rgba(16, 185, 129, 0.1);
+        }
+
+        .requisito-card:hover::before {
+            opacity: 1;
+        }
+
+        .requisito-card:hover::after {
+            opacity: 1;
+        }
+
+        .requisito-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.2rem;
+            position: relative;
+            z-index: 1;
+            animation: bounce 2.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.3));
+        }
+
+        .requisito-card:nth-child(1) .requisito-icon { animation-delay: 0s; }
+        .requisito-card:nth-child(2) .requisito-icon { animation-delay: 0.3s; }
+        .requisito-card:nth-child(3) .requisito-icon { animation-delay: 0.6s; }
+        .requisito-card:nth-child(4) .requisito-icon { animation-delay: 0.9s; }
+        .requisito-card:nth-child(5) .requisito-icon { animation-delay: 1.2s; }
+        .requisito-card:nth-child(6) .requisito-icon { animation-delay: 1.5s; }
+
+        .requisito-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .requisito-card p {
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+            font-size: 0.95rem;
+        }
+
+        /* Prêmios - Layout escalonado */
         .premios-section {
-            padding: 8rem 0;
+            padding: 8rem 2rem;
             background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 100%);
             position: relative;
             overflow: hidden;
         }
 
+        .premios-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .premios-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite reverse;
+        }
+
         .premios-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
             margin-top: 4rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+            align-items: flex-end;
+            padding: 0 2rem;
         }
 
         .premio-card {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(99, 102, 241, 0.15));
             padding: 3rem;
             border-radius: 20px;
-            border: 2px solid rgba(16, 185, 129, 0.2);
+            border: 2px solid rgba(16, 185, 129, 0.3);
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            transform: translateY(0) rotateX(0deg);
+            perspective: 1000px;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .premio-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0) 0%, rgba(16, 185, 129, 0.2) 100%);
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .premio-card::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 8px;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.5), transparent);
+            border-radius: 50%;
+            filter: blur(8px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .premio-card:nth-child(1) {
+            order: 2;
+            transform: scale(1.15) translateY(20px);
+            margin-top: -40px;
+        }
+
+        .premio-card:nth-child(2) {
+            order: 1;
+            opacity: 0.85;
+        }
+
+        .premio-card:nth-child(3) {
+            order: 3;
+            opacity: 0.85;
+        }
+
+        .premio-card:hover {
+            transform: scale(1.2) translateY(-30px) rotateY(5deg);
+            border-color: rgba(16, 185, 129, 0.8);
+            box-shadow: 0 50px 100px rgba(16, 185, 129, 0.5), inset 0 0 40px rgba(16, 185, 129, 0.1);
+        }
+
+        .premio-card:hover::before {
+            opacity: 1;
+        }
+
+        .premio-card:hover::after {
+            opacity: 1;
+            height: 12px;
         }
 
         .premio-icon {
-            font-size: 4rem;
+            font-size: 5rem;
             margin-bottom: 1.5rem;
-            animation: bounce 2s ease-in-out infinite;
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.4));
+        }
+
+        .premio-card:nth-child(2) .premio-icon,
+        .premio-card:nth-child(3) .premio-icon {
+            animation-delay: 0.2s;
         }
 
         .premio-posicao {
@@ -295,6 +874,8 @@
             margin-bottom: 1rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            position: relative;
+            z-index: 1;
         }
 
         .premio-titulo {
@@ -302,154 +883,248 @@
             font-weight: 800;
             color: white;
             margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .premio-desc {
             color: rgba(255, 255, 255, 0.7);
             line-height: 1.6;
+            position: relative;
+            z-index: 1;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        /* Inscrições */
+        /* Inscrições - Design MEGA CRIATIVO */
         .inscricoes-hack {
-            padding: 8rem 0;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
+            padding: 10rem 2rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .inscricoes-hack::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 15% 70%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            animation: gradientShift 10s ease infinite;
         }
 
         .inscricoes-hack h2 {
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-size: clamp(2.5rem, 6vw, 4rem);
             font-weight: 900;
             margin-bottom: 1.5rem;
             color: white;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 50px rgba(16, 185, 129, 0.3);
         }
 
         .inscricoes-hack p {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
-            max-width: 700px;
-            margin: 0 auto 3rem;
-            line-height: 1.7;
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 750px;
+            margin: 0 auto 4rem;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
         }
 
         .inscricao-boxes {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 2rem;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
             max-width: 1000px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
+            z-index: 1;
         }
 
         .inscricao-box {
             padding: 2.5rem;
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(99, 102, 241, 0.25));
             border-radius: 20px;
-            border: 2px solid rgba(16, 185, 129, 0.3);
+            border: 2px solid rgba(16, 185, 129, 0.5);
             backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .inscricao-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.4) 0%, rgba(99, 102, 241, 0.4) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 20px;
         }
 
         .inscricao-box:hover {
-            border-color: rgba(16, 185, 129, 0.6);
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.9);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(99, 102, 241, 0.35));
+            transform: translateY(-15px) scale(1.08);
+            box-shadow: 0 30px 80px rgba(16, 185, 129, 0.4);
+        }
+
+        .inscricao-box:hover::before {
+            opacity: 0.5;
         }
 
         .inscricao-valor {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 900;
             color: #10b981;
             margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
         }
 
         .inscricao-label {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.85);
             font-weight: 600;
+            position: relative;
+            z-index: 1;
+            font-size: 1rem;
         }
 
         .btn-hack {
             display: inline-block;
-            padding: 1.3rem 3.5rem;
-            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            padding: 1.6rem 4rem;
+            background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
             color: white;
             text-decoration: none;
-            font-weight: 800;
-            font-size: 1.1rem;
+            font-weight: 900;
+            font-size: 1.2rem;
             border-radius: 50px;
-            transition: all 0.3s ease;
-            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 60px rgba(16, 185, 129, 0.5);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            border: 3px solid rgba(14, 165, 233, 0.7);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .btn-hack::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .btn-hack:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(16, 185, 129, 0.4);
+            transform: translateY(-8px) scale(1.08);
+            box-shadow: 0 40px 100px rgba(16, 185, 129, 0.7), 0 0 30px rgba(16, 185, 129, 0.5);
+            border-color: rgba(14, 165, 233, 1);
+            letter-spacing: 2px;
         }
 
-        /* Requisitos */
-        .requisitos-section {
-            padding: 6rem 0;
-            background: var(--dark-bg);
+        .btn-hack:hover::before {
+            opacity: 1;
         }
 
-        .requisitos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .requisito-card {
-            padding: 2rem;
-            background: var(--dark-secondary);
-            border-radius: 15px;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .requisito-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(16, 185, 129, 0.5);
-        }
-
-        .requisito-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .requisito-card h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 1rem;
-        }
-
-        .requisito-card p {
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
+        .inscricoes-hack > p:last-of-type {
+            margin-top: 2rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 1;
         }
 
         @media (max-width: 768px) {
+            .hackathon-hero {
+                min-height: 80vh;
+            }
+
+            .hackathon-title {
+                font-size: 2rem;
+            }
+
+            .decoration {
+                font-size: 3rem !important;
+            }
+
             .hackathon-stats {
                 flex-direction: column;
                 gap: 1.5rem;
             }
 
-            .timeline-grid,
+            .stat-box {
+                max-width: 100%;
+            }
+
+            .timeline-card:nth-child(even) > * {
+                direction: ltr;
+            }
+
+            .timeline-grid::before {
+                left: 20px;
+                width: 2px;
+            }
+
+            .timeline-card::before {
+                left: 20px;
+                width: 16px;
+                height: 16px;
+                top: 1.2rem;
+            }
+
+            .timeline-card,
+            .timeline-card:nth-child(even) {
+                grid-template-columns: 1fr;
+                padding-left: 50px;
+            }
+
+            .timeline-card-content {
+                padding: 1.2rem;
+            }
+
             .desafios-grid,
             .premios-grid,
             .requisitos-grid {
                 grid-template-columns: 1fr;
             }
 
-            .hackathon-title {
+            .premio-card:nth-child(1) { transform: translateY(0); }
+            .premio-card:nth-child(2) { transform: translateY(0); }
+            .premio-card:nth-child(3) { transform: translateY(0); }
+
+            .requisitos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .requisito-card {
+                min-height: auto;
+            }
+
+            .requisito-card:hover {
+                transform: scale(1.03);
+            }
+
+            .inscricoes-hack {
+                padding: 6rem 1.5rem;
+            }
+
+            .btn-hack {
+                padding: 1.3rem 3rem;
+                font-size: 1rem;
+            }
+
+            .inscricao-valor {
                 font-size: 2rem;
             }
         }
@@ -528,6 +1203,12 @@
     <!-- Hero -->
     <section class="hackathon-hero">
         <div class="hackathon-hero-bg"></div>
+        <div class="hackathon-hero-decorations">
+            <span class="decoration decoration-1">🚀</span>
+            <span class="decoration decoration-2">🚀</span>
+            <span class="decoration decoration-3">🚀</span>
+            <span class="decoration decoration-4">🚀</span>
+        </div>
         <div class="container">
             <div class="hackathon-hero-content">
                 <div class="hackathon-badge">🚀 Hackathon 2025</div>
@@ -535,27 +1216,11 @@
                     1º Hackathon de Soluções em <span class="accent">Engenharia de IA</span>
                 </h1>
                 <p class="hackathon-subtitle">
-                    Enia Labs × Just Travel: 5 semanas de desafios, criatividade e inovação para transformar o turismo
+                    Construa soluções que transformam negócios reais. Realize seu potencial em IA.
                 </p>
-                
-                <div class="hackathon-stats">
-                    <div class="stat-box">
-                        <div class="stat-number">5</div>
-                        <div class="stat-label">Semanas de Desafio</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">100</div>
-                        <div class="stat-label">Vagas Disponíveis</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">3</div>
-                        <div class="stat-label">Desafios Reais</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">100%</div>
-                        <div class="stat-label">Gratuito</div>
-                    </div>
-                </div>
+                <p style="font-size: 1rem; color: rgba(255, 255, 255, 0.7); margin-top: 1.5rem; position: relative; z-index: 1;">
+                    Uma realização <strong>Enia Labs × Just Travel</strong>
+                </p>
             </div>
         </div>
     </section>
@@ -570,52 +1235,75 @@
             
             <div class="timeline-grid">
                 <div class="timeline-card">
-                    <div class="timeline-date">27 de Outubro</div>
-                    <div class="timeline-week">5 semanas antes</div>
-                    <div class="timeline-title">📢 Anúncio</div>
-                    <div class="timeline-desc">Divulgação oficial do hackathon e chamada para inscrições</div>
+                    <div class="timeline-card-content">
+                        <div class="timeline-date">27 de Outubro</div>
+                        <div class="timeline-week">5 semanas antes</div>
+                        <div class="timeline-title">📢 Anúncio Oficial</div>
+                        <div class="timeline-desc">Divulgação do hackathon e abertura de inscrições</div>
+                    </div>
                 </div>
 
                 <div class="timeline-card">
-                    <div class="timeline-date">03 de Novembro</div>
-                    <div class="timeline-week">4 semanas antes</div>
-                    <div class="timeline-title">🎬 Live de Abertura</div>
-                    <div class="timeline-desc">Abertura oficial e início das inscrições via formulário</div>
+                    <div class="timeline-card-content">
+                        <div class="timeline-date">03 de Novembro</div>
+                        <div class="timeline-week">4 semanas antes</div>
+                        <div class="timeline-title">🎬 Live de Abertura</div>
+                        <div class="timeline-desc">Abertura oficial e detalhes finais dos desafios</div>
+                    </div>
                 </div>
 
                 <div class="timeline-card">
-                    <div class="timeline-date">10 de Novembro</div>
-                    <div class="timeline-week">3 semanas antes</div>
-                    <div class="timeline-title">📚 Minicurso 1</div>
-                    <div class="timeline-desc">IA como Recurso para Inovação com Ricardo Rocha</div>
+                    <div class="timeline-card-content">
+                        <div class="timeline-date">10 de Novembro</div>
+                        <div class="timeline-week">3 semanas antes</div>
+                        <div class="timeline-title">📚 Mentoria 1: Inovação com IA</div>
+                        <div class="timeline-desc">Fundamentos de IA e estratégias de inovação com Ricardo Rocha</div>
+                    </div>
                 </div>
 
                 <div class="timeline-card">
-                    <div class="timeline-date">17 de Novembro</div>
-                    <div class="timeline-week">2 semanas antes</div>
-                    <div class="timeline-title">💻 Minicurso 2</div>
-                    <div class="timeline-desc">Programação com IA/Cursor (hands-on)</div>
+                    <div class="timeline-card-content">
+                        <div class="timeline-date">17 de Novembro</div>
+                        <div class="timeline-week">2 semanas antes</div>
+                        <div class="timeline-title">💻 Mentoria 2: Programação com Cursor</div>
+                        <div class="timeline-desc">Desenvolvimento eficiente usando IA e Cursor (hands-on)</div>
+                    </div>
                 </div>
 
                 <div class="timeline-card">
-                    <div class="timeline-date">24 de Novembro</div>
-                    <div class="timeline-week">1 semana antes</div>
-                    <div class="timeline-title">🎨 Minicurso 3 & Mentoria 4</div>
-                    <div class="timeline-desc">WebApps com Lovable + Automação com N8N</div>
+                    <div class="timeline-card-content">
+                        <div class="timeline-date">24 de Novembro</div>
+                        <div class="timeline-week">1 semana antes</div>
+                        <div class="timeline-title">🎨 Mentoria 3: Aplicativos com Lovable</div>
+                        <div class="timeline-desc">Criar webapps em minutos com Lovable (interface visual)</div>
+                    </div>
                 </div>
 
                 <div class="timeline-card">
-                    <div class="timeline-date">01 de Dezembro</div>
-                    <div class="timeline-week">Início do Desafio</div>
-                    <div class="timeline-title">⚡ Lançamento</div>
-                    <div class="timeline-desc">Divulgação dos 3 desafios. Começou a diversão!</div>
+                    <div class="timeline-card-content">
+                        <div class="timeline-date">24 de Novembro</div>
+                        <div class="timeline-week">1 semana antes</div>
+                        <div class="timeline-title">⚙️ Mentoria 4: Automações com N8N</div>
+                        <div class="timeline-desc">Automações e integrações poderosas sem código</div>
+                    </div>
                 </div>
 
                 <div class="timeline-card">
-                    <div class="timeline-date">06 de Dezembro</div>
-                    <div class="timeline-week">Dia Final</div>
-                    <div class="timeline-title">🏆 Apresentações</div>
-                    <div class="timeline-desc">Presencial no IME-UFBA. Premiação dos vencedores!</div>
+                    <div class="timeline-card-content">
+                        <div class="timeline-date">01 de Dezembro</div>
+                        <div class="timeline-week">Início do Desafio</div>
+                        <div class="timeline-title">⚡ Lançamento dos Desafios</div>
+                        <div class="timeline-desc">Começa a contagem regressiva! Forme equipes e escolha desafios</div>
+                    </div>
+                </div>
+
+                <div class="timeline-card">
+                    <div class="timeline-card-content">
+                        <div class="timeline-date">06 de Dezembro</div>
+                        <div class="timeline-week">Dia Final</div>
+                        <div class="timeline-title">🏆 Apresentações e Premiação</div>
+                        <div class="timeline-desc">Presencial no IME-UFBA. Mostre seu projeto e concorra aos prêmios!</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -675,49 +1363,125 @@
         </div>
     </section>
 
+    <!-- Mentorias Exclusivas -->
+    <section class="mentorias-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Mentorias Exclusivas <span class="gradient-text">para Equipes</span></h2>
+                <p class="section-description">Aprenda com especialistas que transformam ideias em realidade</p>
+            </div>
+
+            <div class="mentorias-grid">
+                <div class="mentoria-card">
+                    <img src="images/membros/ricardo.png" alt="" class="mentoria-photo">
+                    <h3>Inovação com IA</h3>
+                    <div class="mentoria-speaker">com Ricardo Rocha</div>
+                    <p class="mentoria-desc">Fundamentos de inteligência artificial e estratégias de inovação aplicadas a negócios reais.</p>
+                    <div class="mentoria-topics">
+                        <h4>Você vai aprender:</h4>
+                        <ul>
+                            <li>Fundamentos de IA e Machine Learning</li>
+                            <li>Como identificar oportunidades de inovação</li>
+                            <li>Aplicação prática em casos reais</li>
+                            <li>Estratégias de negócio com IA</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mentoria-card">
+                    <img src="https://via.placeholder.com/160" alt="" class="mentoria-photo">
+                    <h3>Programação com Cursor</h3>
+                    <div class="mentoria-speaker">com Especialista em IA</div>
+                    <p class="mentoria-desc">Desenvolvimento ágil e eficiente usando IA como seu copiloto de programação.</p>
+                    <div class="mentoria-topics">
+                        <h4>Você vai aprender:</h4>
+                        <ul>
+                            <li>Usar Cursor como ambiente de desenvolvimento</li>
+                            <li>Acelerar desenvolvimento com IA</li>
+                            <li>Boas práticas de código com assistência IA</li>
+                            <li>Debugging e otimização inteligente</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mentoria-card">
+                    <img src="https://via.placeholder.com/160" alt="" class="mentoria-photo">
+                    <h3>Aplicativos com Lovable</h3>
+                    <div class="mentoria-speaker">com Expert Frontend</div>
+                    <p class="mentoria-desc">Crie interfaces modernas e responsivas em minutos com geração visual de código.</p>
+                    <div class="mentoria-topics">
+                        <h4>Você vai aprender:</h4>
+                        <ul>
+                            <li>Design visual de interfaces com Lovable</li>
+                            <li>Geração automática de código frontend</li>
+                            <li>Prototipagem rápida de webapps</li>
+                            <li>Integração com backends</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mentoria-card">
+                    <img src="https://via.placeholder.com/160" alt="" class="mentoria-photo">
+                    <h3>Automações com N8N</h3>
+                    <div class="mentoria-speaker">com Especialista em Automação</div>
+                    <p class="mentoria-desc">Conecte sistemas, automatize processos e integre APIs sem escrever código complexo.</p>
+                    <div class="mentoria-topics">
+                        <h4>Você vai aprender:</h4>
+                        <ul>
+                            <li>Criar workflows automatizados com N8N</li>
+                            <li>Integrar múltiplos serviços e APIs</li>
+                            <li>Automações de dados e processos</li>
+                            <li>Escalabilidade e monitoramento</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Requisitos e Regras -->
     <section class="requisitos-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Requisitos &<span class="gradient-text"> Regras</span></h2>
-                <p class="section-description">O que você precisa saber para participar</p>
+                <h2 class="section-title">Como Participar <span class="gradient-text">do Desafio</span></h2>
+                <p class="section-description">Tudo que você precisa saber para começar</p>
             </div>
 
             <div class="requisitos-grid">
                 <div class="requisito-card">
                     <div class="requisito-icon">👥</div>
-                    <h3>Equipes</h3>
-                    <p>Formadas por 4-5 pessoas. Inscrições individuais aceitas - ajudaremos na formação de equipes!</p>
+                    <h3>Monte sua Equipe</h3>
+                    <p>Forme grupos de 4-5 pessoas ou se inscreva sozinho que ajudaremos na formação!</p>
                 </div>
 
                 <div class="requisito-card">
-                    <div class="requisito-icon">💾</div>
-                    <h3>Entrega Obrigatória</h3>
-                    <p>Link do repositório Git com todo o código. Sem código = sem apresentação</p>
+                    <div class="requisito-icon">💡</div>
+                    <h3>Escolha um Desafio</h3>
+                    <p>3 desafios reais de negócio para resolver com IA e criatividade</p>
                 </div>
 
                 <div class="requisito-card">
-                    <div class="requisito-icon">⏱️</div>
-                    <h3>Tempo de Apresentação</h3>
-                    <p>3min30s a 4min30s. Acima de 5 minutos, apresentação interrompida com penalidade</p>
+                    <div class="requisito-icon">📚</div>
+                    <h3>Aprenda com Mentores</h3>
+                    <p>Receba orientação de especialistas ao longo das 5 semanas</p>
                 </div>
 
                 <div class="requisito-card">
-                    <div class="requisito-icon">🎓</div>
-                    <h3>Público-Alvo</h3>
-                    <p>Estudantes universitários de Salvador, cursos de exatas e tecnologia, entusiastas de IA</p>
+                    <div class="requisito-icon">💻</div>
+                    <h3>Desenvolva a Solução</h3>
+                    <p>Crie um projeto funcional com código versionado no Git</p>
                 </div>
 
                 <div class="requisito-card">
-                    <div class="requisito-icon">🏫</div>
-                    <h3>Presença Mínima</h3>
-                    <p>Pelo menos 2 membros da equipe no dia da apresentação presencial</p>
+                    <div class="requisito-icon">🎤</div>
+                    <h3>Apresente seu Trabalho</h3>
+                    <p>Mostre seus resultados em apresentação presencial e concorra aos prêmios</p>
                 </div>
 
                 <div class="requisito-card">
-                    <div class="requisito-icon">✅</div>
-                    <h3>Validação</h3>
-                    <p>Premiação após validação técnica do código e funcionalidade pela organização</p>
+                    <div class="requisito-icon">🏆</div>
+                    <h3>Ganhe Reconhecimento</h3>
+                    <p>Prêmios + visibilidade + chance de ter seu projeto em produção</p>
                 </div>
             </div>
         </div>
@@ -728,29 +1492,29 @@
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Prêmios & <span class="gradient-text">Reconhecimento</span></h2>
-                <p class="section-description">Além dos prêmios, compartilharemos a PI e usaremos seus projetos!</p>
+                <p class="section-description">Além dos prêmios, compartilharemos a PI e usaremos seus projetos em produção!</p>
             </div>
 
             <div class="premios-grid">
                 <div class="premio-card">
-                    <div class="premio-icon">🥇</div>
-                    <div class="premio-posicao">1º Lugar</div>
-                    <div class="premio-titulo">Campeões</div>
-                    <div class="premio-desc">Prêmio a definir + visibilidade nacional + oportunidades de carreira</div>
-                </div>
-
-                <div class="premio-card">
                     <div class="premio-icon">🥈</div>
                     <div class="premio-posicao">2º Lugar</div>
                     <div class="premio-titulo">Vice-Campeões</div>
-                    <div class="premio-desc">Prêmio a definir + reconhecimento + networking com mentores</div>
+                    <div class="premio-desc">Prêmio surpresa + reconhecimento público + networking com mentores</div>
+                </div>
+
+                <div class="premio-card">
+                    <div class="premio-icon">🥇</div>
+                    <div class="premio-posicao">🏆 Campeões 🏆</div>
+                    <div class="premio-titulo">1º Lugar</div>
+                    <div class="premio-desc">Prêmio premium + visibilidade nacional + oportunidades de carreira garantidas</div>
                 </div>
 
                 <div class="premio-card">
                     <div class="premio-icon">🥉</div>
                     <div class="premio-posicao">3º Lugar</div>
                     <div class="premio-titulo">Destaque</div>
-                    <div class="premio-desc">Prêmio a definir + certificado exclusivo + acesso a oportunidades</div>
+                    <div class="premio-desc">Prêmio exclusivo + certificado premium + acesso VIP a oportunidades</div>
                 </div>
             </div>
         </div>
@@ -759,10 +1523,9 @@
     <!-- Inscrições -->
     <section class="inscricoes-hack">
         <div class="container">
-            <h2>Pronto para o <span class="gradient-text">Desafio?</span></h2>
+            <h2>🚀 Pronto para Transformar o Turismo?</h2>
             <p>
-                100 vagas gratuitas para estudantes dispostos a inovar. Inscrições abertas a partir de 03 de novembro. 
-                Traga sua criatividade, sua equipe e muita disposição para criar algo incrível!
+                Junte-se a 100 estudantes talentosos em 5 semanas de desafios reais. Crie soluções inovadoras com IA, trabalhe com parceiros do mercado e tenha suas ideias implementadas em produção!
             </p>
 
             <div class="inscricao-boxes">
@@ -772,7 +1535,7 @@
                 </div>
                 <div class="inscricao-box">
                     <div class="inscricao-valor">R$ 0</div>
-                    <div class="inscricao-label">Taxa de Inscrição</div>
+                    <div class="inscricao-label">100% Gratuito</div>
                 </div>
                 <div class="inscricao-box">
                     <div class="inscricao-valor">4-5</div>
@@ -781,10 +1544,10 @@
             </div>
 
             <a href="https://forms.gle/seu-link-aqui" target="_blank" class="btn-hack">
-                📝 Inscrever-se Agora
+                ⚡ Inscrever-se Agora ⚡
             </a>
-            <p style="margin-top: 2rem; color: rgba(255,255,255,0.6); font-size: 0.95rem;">
-                Inscrições a partir de 03 de novembro • Seleção de participantes até 10 de novembro
+            <p>
+                Inscrições abertas: 03 de novembro • Seleção: até 10 de novembro • Evento: 01-06 de dezembro
             </p>
         </div>
     </section>
